@@ -3464,8 +3464,8 @@ input[type="button"].btn-block {
 }
 
 .dropdown-menu-right {
-  right: 0;
-  left: auto;
+  left: 0;
+  right: auto;
 }
 
 @media (min-width: 576px) {
