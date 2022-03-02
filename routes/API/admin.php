@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\API\Charity\CharityUserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,6 +15,7 @@ use App\Http\Controllers\LoginController;
 |
 */
 
+Route::post('charity/register', [CharityUserController::class,'register']);
 Route::post('charity/login',[LoginController::class, 'adminLogin'])->name('adminLogin');
 
 Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:admin'] ],function(){
