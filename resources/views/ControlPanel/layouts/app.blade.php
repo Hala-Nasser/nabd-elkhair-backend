@@ -27,16 +27,15 @@
         </div>
                 
         <h4 style="margin-right: 10px; display: inline; vertical-align: middle;">نبض الخير</h4>
-               
 
-                <div id="navbarSupportedContent" style="position:absolute; display: inline; right:30; margin-top: 10px;">
+                <div id="navbarSupportedContent" style="position:absolute; display: inline; left:20;">
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto" style="display: inline;">
                         <!-- Authentication Links -->
                         @guest
 
                         @else
-                            <li class="nav-item dropdown">
+                        <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
