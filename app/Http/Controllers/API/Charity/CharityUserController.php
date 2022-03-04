@@ -11,8 +11,30 @@ use Validator;
 class CharityUserController extends Controller
 {
     public $successStatus = 200;
-    //hala
-    // after solve conflicts
+    
+    //login
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['error' => $validator->errors()->all()]);
+        }
+
+        if(auth()->guard('charity-api')->attempt(['email' => request('email'), 'password' => request('password')])){
+            
+            $admin = Charity::select('_charities.*')->find(auth()->guard('charity-api')->user()->id);
+            $success =  $admin;
+            $success['token'] =  $admin->createToken('MyApp',['charity-api'])->accessToken; 
+
+            return response()->json($success, 200);
+        }else{ 
+            return response()->json(['error' => ['Email or Password are Wrong.']], 200);
+        }
+    }
 
 
     //register
@@ -24,7 +46,7 @@ class CharityUserController extends Controller
             'password' => [
                 'required',
                 'string',
-                'min:10',             // must be at least 10 characters in length
+                'min:8',             // must be at least 8 characters in length
                 'regex:/[a-z]/',      // must contain at least one lowercase letter
                 'regex:/[A-Z]/',      // must contain at least one uppercase letter
                 'regex:/[0-9]/',      // must contain at least one digit
