@@ -12,6 +12,7 @@ class CharityUserController extends Controller
 {
     public $successStatus = 200;
     //hala
+    // after solve conflicts
 
 
     //register
