@@ -22,7 +22,6 @@
                             {{ session('status') }}
                         </div>
                     @endif
-
                     تم تسجيل الدخول بنجاح
                 </div>
             </div>

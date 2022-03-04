@@ -26,7 +26,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
         Passport::routes(); 
-
+        Passport::tokensCan([
+            'user' => 'User Type',
+            'admin' => 'Admin User Type',
+        ]);
         //
     }
 }
