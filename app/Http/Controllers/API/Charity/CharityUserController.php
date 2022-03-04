@@ -11,7 +11,7 @@ use Validator;
 class CharityUserController extends Controller
 {
     public $successStatus = 200;
-
+    //charity test
 
     //register
     public function register(Request $request) 
