@@ -12,7 +12,40 @@ class DonorController extends Controller
 {
     public $successStatus = 200;
 
+    
+   /* public function login(){ 
+        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
+            $user = Auth::user(); 
+            $success['token'] =  $user->createToken('MyApp')-> accessToken; 
+            return response()->json(['success' => $success], $this-> successStatus); 
+        } 
+        else{ 
+            return response()->json(['error'=>'Unauthorised'], 401); 
+        } 
+    }*/
+    //login
 
+    public function login(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['error' => $validator->errors()->all()]);
+        }
+        
+        if(auth()->guard('donor-api')->attempt(['email' => request('email'), 'password' => request('password')])){
+            $user = Donor::select('donors.*')->find(auth()->guard('donor-api')->user()->id);
+            $success =  $user;
+            $success['token'] =  $user->createToken('MyApp',['donor-api'])->accessToken; 
+
+            return response()->json($success, 200);
+        }else{ 
+            return response()->json(['error' => ['Email or Password are Wrong.']], 200);
+        }
+
+    }
 
 
     //register
@@ -24,7 +57,7 @@ class DonorController extends Controller
             'password' => [
                 'required',
                 'string',
-                'min:10',             // must be at least 10 characters in length
+                'min:8',             // must be at least 8 characters in length
                 'regex:/[a-z]/',      // must contain at least one lowercase letter
                 'regex:/[A-Z]/',      // must contain at least one uppercase letter
                 'regex:/[0-9]/',      // must contain at least one digit
@@ -53,14 +86,7 @@ if ($validator->fails()) {
 
         $success = $donor->save();
 
-/*
-$input = $request->all(); 
-        $input['password'] = bcrypt($input['password']); 
-        $user = User::create($input); 
-        */
-        /*$success['token'] =  $user->createToken('MyApp')-> accessToken; 
-        $success['name'] =  $user->name;*/
-return response()->json(['success'=>$success], $this-> successStatus); 
+        return response()->json(['success'=>$success], $this-> successStatus); 
     }
 
 }

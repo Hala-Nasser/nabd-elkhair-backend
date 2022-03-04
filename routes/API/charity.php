@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\API\Charity\CharityUserController;
 /*
 |--------------------------------------------------------------------------
@@ -16,9 +15,4 @@ use App\Http\Controllers\API\Charity\CharityUserController;
 */
 
 Route::post('charity/register', [CharityUserController::class,'register']);
-Route::post('charity/login',[LoginController::class, 'adminLogin'])->name('adminLogin');
-
-Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:admin'] ],function(){
-   // authenticated staff routes here 
-    Route::get('dashboard',[LoginController::class, 'adminDashboard']);
-});
+Route::post('charity/login',[CharityUserController::class, 'login']);
