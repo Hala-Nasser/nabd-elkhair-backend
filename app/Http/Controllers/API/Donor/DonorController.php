@@ -8,7 +8,7 @@ use App\Models\Donor;
 use Illuminate\Support\Facades\Auth; 
 use Validator;
 
-class UserController extends Controller
+class DonorController extends Controller
 {
     public $successStatus = 200;
 
