@@ -5,149 +5,160 @@
  * --------------------------------------------
  */
 
-import $ from 'jquery'
+const CardRefresh = (($) => {
+  /**
+   * Constants
+   * ====================================================
+   */
 
-/**
- * Constants
- * ====================================================
- */
+  const NAME               = 'CardRefresh'
+  const DATA_KEY           = 'lte.cardrefresh'
+  const EVENT_KEY          = `.${DATA_KEY}`
+  const JQUERY_NO_CONFLICT = $.fn[NAME]
 
-const NAME = 'CardRefresh'
-const DATA_KEY = 'lte.cardrefresh'
-const EVENT_KEY = `.${DATA_KEY}`
-const JQUERY_NO_CONFLICT = $.fn[NAME]
-
-const EVENT_LOADED = `loaded${EVENT_KEY}`
-const EVENT_OVERLAY_ADDED = `overlay.added${EVENT_KEY}`
-const EVENT_OVERLAY_REMOVED = `overlay.removed${EVENT_KEY}`
-
-const CLASS_NAME_CARD = 'card'
-
-const SELECTOR_CARD = `.${CLASS_NAME_CARD}`
-const SELECTOR_DATA_REFRESH = '[data-card-widget="card-refresh"]'
-
-const Default = {
-  source: '',
-  sourceSelector: '',
-  params: {},
-  trigger: SELECTOR_DATA_REFRESH,
-  content: '.card-body',
-  loadInContent: true,
-  loadOnInit: true,
-  responseType: '',
-  overlayTemplate: '<div class="overlay"><i class="fas fa-2x fa-sync-alt fa-spin"></i></div>',
-  onLoadStart() {},
-  onLoadDone(response) {
-    return response
+  const Event = {
+    LOADED: `loaded${EVENT_KEY}`,
+    OVERLAY_ADDED: `overlay.added${EVENT_KEY}`,
+    OVERLAY_REMOVED: `overlay.removed${EVENT_KEY}`,
   }
-}
 
-class CardRefresh {
-  constructor(element, settings) {
-    this._element = element
-    this._parent = element.parents(SELECTOR_CARD).first()
-    this._settings = $.extend({}, Default, settings)
-    this._overlay = $(this._settings.overlayTemplate)
+  const ClassName = {
+    CARD: 'card',
+  }
 
-    if (element.hasClass(CLASS_NAME_CARD)) {
-      this._parent = element
-    }
+  const Selector = {
+    CARD: `.${ClassName.CARD}`,
+    DATA_REFRESH: '[data-card-widget="card-refresh"]',
+  }
 
-    if (this._settings.source === '') {
-      throw new Error('Source url was not defined. Please specify a url in your CardRefresh source option.')
+  const Default = {
+    source: '',
+    sourceSelector: '',
+    params: {},
+    trigger: Selector.DATA_REFRESH,
+    content: '.card-body',
+    loadInContent: true,
+    loadOnInit: true,
+    responseType: '',
+    overlayTemplate: '<div class="overlay"><i class="fas fa-2x fa-sync-alt fa-spin"></i></div>',
+    onLoadStart: function () {
+    },
+    onLoadDone: function (response) {
+      return response;
     }
   }
 
-  load() {
-    this._addOverlay()
-    this._settings.onLoadStart.call($(this))
+  class CardRefresh {
+    constructor(element, settings) {
+      this._element  = element
+      this._parent = element.parents(Selector.CARD).first()
+      this._settings = $.extend({}, Default, settings)
+      this._overlay = $(this._settings.overlayTemplate)
 
-    $.get(this._settings.source, this._settings.params, response => {
-      if (this._settings.loadInContent) {
-        if (this._settings.sourceSelector !== '') {
-          response = $(response).find(this._settings.sourceSelector).html()
-        }
-
-        this._parent.find(this._settings.content).html(response)
+      if (element.hasClass(ClassName.CARD)) {
+        this._parent = element
       }
 
-      this._settings.onLoadDone.call($(this), response)
-      this._removeOverlay()
-    }, this._settings.responseType !== '' && this._settings.responseType)
+      if (this._settings.source === '') {
+        throw new Error('Source url was not defined. Please specify a url in your CardRefresh source option.');
+      }
 
-    $(this._element).trigger($.Event(EVENT_LOADED))
-  }
+      this._init();
 
-  _addOverlay() {
-    this._parent.append(this._overlay)
-    $(this._element).trigger($.Event(EVENT_OVERLAY_ADDED))
-  }
+      if (this._settings.loadOnInit) {
+        this.load();
+      }
+    }
 
-  _removeOverlay() {
-    this._parent.find(this._overlay).remove()
-    $(this._element).trigger($.Event(EVENT_OVERLAY_REMOVED))
-  }
+    load() {
+      this._addOverlay()
+      this._settings.onLoadStart.call($(this))
 
-  // Private
+      $.get(this._settings.source, this._settings.params, function (response) {
+        if (this._settings.loadInContent) {
+          if (this._settings.sourceSelector != '') {
+            response = $(response).find(this._settings.sourceSelector).html()
+          }
 
-  _init() {
-    $(this).find(this._settings.trigger).on('click', () => {
-      this.load()
-    })
+          this._parent.find(this._settings.content).html(response)
+        }
 
-    if (this._settings.loadOnInit) {
-      this.load()
+        this._settings.onLoadDone.call($(this), response)
+        this._removeOverlay();
+      }.bind(this), this._settings.responseType !== '' && this._settings.responseType)
+
+      const loadedEvent = $.Event(Event.LOADED)
+      $(this._element).trigger(loadedEvent)
+    }
+
+    _addOverlay() {
+      this._parent.append(this._overlay)
+
+      const overlayAddedEvent = $.Event(Event.OVERLAY_ADDED)
+      $(this._element).trigger(overlayAddedEvent)
+    };
+
+    _removeOverlay() {
+      this._parent.find(this._overlay).remove()
+
+      const overlayRemovedEvent = $.Event(Event.OVERLAY_REMOVED)
+      $(this._element).trigger(overlayRemovedEvent)
+    };
+
+
+    // Private
+
+    _init(card) {
+      $(this).find(this._settings.trigger).on('click', () => {
+        this.load()
+      })
+    }
+
+    // Static
+
+    static _jQueryInterface(config) {
+      let data = $(this).data(DATA_KEY)
+      let options = $(this).data()
+
+      if (!data) {
+        data = new CardRefresh($(this), options)
+        $(this).data(DATA_KEY, typeof config === 'string' ? data: config)
+      }
+
+      if (typeof config === 'string' && config.match(/load/)) {
+        data[config]()
+      } else if (typeof config === 'object') {
+        data._init($(this))
+      }
     }
   }
 
-  // Static
+  /**
+   * Data API
+   * ====================================================
+   */
 
-  static _jQueryInterface(config) {
-    let data = $(this).data(DATA_KEY)
-    const _options = $.extend({}, Default, $(this).data())
-
-    if (!data) {
-      data = new CardRefresh($(this), _options)
-      $(this).data(DATA_KEY, typeof config === 'string' ? data : config)
+  $(document).on('click', Selector.DATA_REFRESH, function (event) {
+    if (event) {
+      event.preventDefault()
     }
 
-    if (typeof config === 'string' && /load/.test(config)) {
-      data[config]()
-    } else {
-      data._init($(this))
-    }
-  }
-}
-
-/**
- * Data API
- * ====================================================
- */
-
-$(document).on('click', SELECTOR_DATA_REFRESH, function (event) {
-  if (event) {
-    event.preventDefault()
-  }
-
-  CardRefresh._jQueryInterface.call($(this), 'load')
-})
-
-$(() => {
-  $(SELECTOR_DATA_REFRESH).each(function () {
-    CardRefresh._jQueryInterface.call($(this))
+    CardRefresh._jQueryInterface.call($(this), 'load')
   })
-})
 
-/**
- * jQuery API
- * ====================================================
- */
+  /**
+   * jQuery API
+   * ====================================================
+   */
 
-$.fn[NAME] = CardRefresh._jQueryInterface
-$.fn[NAME].Constructor = CardRefresh
-$.fn[NAME].noConflict = function () {
-  $.fn[NAME] = JQUERY_NO_CONFLICT
-  return CardRefresh._jQueryInterface
-}
+  $.fn[NAME] = CardRefresh._jQueryInterface
+  $.fn[NAME].Constructor = CardRefresh
+  $.fn[NAME].noConflict  = function () {
+    $.fn[NAME] = JQUERY_NO_CONFLICT
+    return CardRefresh._jQueryInterface
+  }
+
+  return CardRefresh
+})(jQuery)
 
 export default CardRefresh

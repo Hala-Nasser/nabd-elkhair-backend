@@ -5,171 +5,158 @@
  * --------------------------------------------
  */
 
-import $ from 'jquery'
+const Treeview = (($) => {
+  /**
+   * Constants
+   * ====================================================
+   */
 
-/**
- * Constants
- * ====================================================
- */
+  const NAME               = 'Treeview'
+  const DATA_KEY           = 'lte.treeview'
+  const EVENT_KEY          = `.${DATA_KEY}`
+  const JQUERY_NO_CONFLICT = $.fn[NAME]
 
-const NAME = 'Treeview'
-const DATA_KEY = 'lte.treeview'
-const EVENT_KEY = `.${DATA_KEY}`
-const JQUERY_NO_CONFLICT = $.fn[NAME]
-
-const EVENT_EXPANDED = `expanded${EVENT_KEY}`
-const EVENT_COLLAPSED = `collapsed${EVENT_KEY}`
-const EVENT_LOAD_DATA_API = `load${EVENT_KEY}`
-
-const SELECTOR_LI = '.nav-item'
-const SELECTOR_LINK = '.nav-link'
-const SELECTOR_TREEVIEW_MENU = '.nav-treeview'
-const SELECTOR_OPEN = '.menu-open'
-const SELECTOR_DATA_WIDGET = '[data-widget="treeview"]'
-
-const CLASS_NAME_OPEN = 'menu-open'
-const CLASS_NAME_IS_OPENING = 'menu-is-opening'
-const CLASS_NAME_SIDEBAR_COLLAPSED = 'sidebar-collapse'
-
-const Default = {
-  trigger: `${SELECTOR_DATA_WIDGET} ${SELECTOR_LINK}`,
-  animationSpeed: 300,
-  accordion: true,
-  expandSidebar: false,
-  sidebarButtonSelector: '[data-widget="pushmenu"]'
-}
-
-/**
- * Class Definition
- * ====================================================
- */
-class Treeview {
-  constructor(element, config) {
-    this._config = config
-    this._element = element
+  const Event = {
+    SELECTED     : `selected${EVENT_KEY}`,
+    EXPANDED     : `expanded${EVENT_KEY}`,
+    COLLAPSED    : `collapsed${EVENT_KEY}`,
+    LOAD_DATA_API: `load${EVENT_KEY}`
   }
 
-  // Public
-
-  init() {
-    $(`${SELECTOR_LI}${SELECTOR_OPEN} ${SELECTOR_TREEVIEW_MENU}${SELECTOR_OPEN}`).css('display', 'block')
-    this._setupListeners()
+  const Selector = {
+    LI           : '.nav-item',
+    LINK         : '.nav-link',
+    TREEVIEW_MENU: '.nav-treeview',
+    OPEN         : '.menu-open',
+    DATA_WIDGET  : '[data-widget="treeview"]'
   }
 
-  expand(treeviewMenu, parentLi) {
-    const expandedEvent = $.Event(EVENT_EXPANDED)
+  const ClassName = {
+    LI           : 'nav-item',
+    LINK         : 'nav-link',
+    TREEVIEW_MENU: 'nav-treeview',
+    OPEN         : 'menu-open'
+  }
 
-    if (this._config.accordion) {
-      const openMenuLi = parentLi.siblings(SELECTOR_OPEN).first()
-      const openTreeview = openMenuLi.find(SELECTOR_TREEVIEW_MENU).first()
-      this.collapse(openTreeview, openMenuLi)
+  const Default = {
+    trigger       : `${Selector.DATA_WIDGET} ${Selector.LINK}`,
+    animationSpeed: 300,
+    accordion     : true
+  }
+
+  /**
+   * Class Definition
+   * ====================================================
+   */
+  class Treeview {
+    constructor(element, config) {
+      this._config  = config
+      this._element = element
     }
 
-    parentLi.addClass(CLASS_NAME_IS_OPENING)
-    treeviewMenu.stop().slideDown(this._config.animationSpeed, () => {
-      parentLi.addClass(CLASS_NAME_OPEN)
-      $(this._element).trigger(expandedEvent)
-    })
+    // Public
 
-    if (this._config.expandSidebar) {
-      this._expandSidebar()
+    init() {
+      this._setupListeners()
     }
-  }
 
-  collapse(treeviewMenu, parentLi) {
-    const collapsedEvent = $.Event(EVENT_COLLAPSED)
+    expand(treeviewMenu, parentLi) {
+      const expandedEvent = $.Event(Event.EXPANDED)
 
-    parentLi.removeClass(`${CLASS_NAME_IS_OPENING} ${CLASS_NAME_OPEN}`)
-    treeviewMenu.stop().slideUp(this._config.animationSpeed, () => {
-      $(this._element).trigger(collapsedEvent)
-      treeviewMenu.find(`${SELECTOR_OPEN} > ${SELECTOR_TREEVIEW_MENU}`).slideUp()
-      treeviewMenu.find(SELECTOR_OPEN).removeClass(CLASS_NAME_OPEN)
-    })
-  }
-
-  toggle(event) {
-    const $relativeTarget = $(event.currentTarget)
-    const $parent = $relativeTarget.parent()
-
-    let treeviewMenu = $parent.find(`> ${SELECTOR_TREEVIEW_MENU}`)
-
-    if (!treeviewMenu.is(SELECTOR_TREEVIEW_MENU)) {
-      if (!$parent.is(SELECTOR_LI)) {
-        treeviewMenu = $parent.parent().find(`> ${SELECTOR_TREEVIEW_MENU}`)
+      if (this._config.accordion) {
+        const openMenuLi   = parentLi.siblings(Selector.OPEN).first()
+        const openTreeview = openMenuLi.find(Selector.TREEVIEW_MENU).first()
+        this.collapse(openTreeview, openMenuLi)
       }
 
-      if (!treeviewMenu.is(SELECTOR_TREEVIEW_MENU)) {
+      treeviewMenu.stop().slideDown(this._config.animationSpeed, () => {
+        parentLi.addClass(ClassName.OPEN)
+        $(this._element).trigger(expandedEvent)
+      })
+    }
+
+    collapse(treeviewMenu, parentLi) {
+      const collapsedEvent = $.Event(Event.COLLAPSED)
+
+      treeviewMenu.stop().slideUp(this._config.animationSpeed, () => {
+        parentLi.removeClass(ClassName.OPEN)
+        $(this._element).trigger(collapsedEvent)
+        treeviewMenu.find(`${Selector.OPEN} > ${Selector.TREEVIEW_MENU}`).slideUp()
+        treeviewMenu.find(Selector.OPEN).removeClass(ClassName.OPEN)
+      })
+    }
+
+    toggle(event) {
+      const $relativeTarget = $(event.currentTarget)
+      const treeviewMenu    = $relativeTarget.next()
+
+      if (!treeviewMenu.is(Selector.TREEVIEW_MENU)) {
         return
       }
-    }
 
-    event.preventDefault()
+      event.preventDefault()
 
-    const parentLi = $relativeTarget.parents(SELECTOR_LI).first()
-    const isOpen = parentLi.hasClass(CLASS_NAME_OPEN)
+      const parentLi = $relativeTarget.parents(Selector.LI).first()
+      const isOpen   = parentLi.hasClass(ClassName.OPEN)
 
-    if (isOpen) {
-      this.collapse($(treeviewMenu), parentLi)
-    } else {
-      this.expand($(treeviewMenu), parentLi)
-    }
-  }
-
-  // Private
-
-  _setupListeners() {
-    const elementId = this._element.attr('id') !== undefined ? `#${this._element.attr('id')}` : ''
-    $(document).on('click', `${elementId}${this._config.trigger}`, event => {
-      this.toggle(event)
-    })
-  }
-
-  _expandSidebar() {
-    if ($('body').hasClass(CLASS_NAME_SIDEBAR_COLLAPSED)) {
-      $(this._config.sidebarButtonSelector).PushMenu('expand')
-    }
-  }
-
-  // Static
-
-  static _jQueryInterface(config) {
-    return this.each(function () {
-      let data = $(this).data(DATA_KEY)
-      const _options = $.extend({}, Default, $(this).data())
-
-      if (!data) {
-        data = new Treeview($(this), _options)
-        $(this).data(DATA_KEY, data)
+      if (isOpen) {
+        this.collapse($(treeviewMenu), parentLi)
+      } else {
+        this.expand($(treeviewMenu), parentLi)
       }
+    }
 
-      if (config === 'init') {
-        data[config]()
-      }
-    })
+    // Private
+
+    _setupListeners() {
+      $(document).on('click', this._config.trigger, (event) => {
+        this.toggle(event)
+      })
+    }
+
+    // Static
+
+    static _jQueryInterface(config) {
+      return this.each(function () {
+        let data      = $(this).data(DATA_KEY)
+        const _config = $.extend({}, Default, $(this).data())
+
+        if (!data) {
+          data = new Treeview($(this), _config)
+          $(this).data(DATA_KEY, data)
+        }
+
+        if (config === 'init') {
+          data[config]()
+        }
+      })
+    }
   }
-}
 
-/**
- * Data API
- * ====================================================
- */
+  /**
+   * Data API
+   * ====================================================
+   */
 
-$(window).on(EVENT_LOAD_DATA_API, () => {
-  $(SELECTOR_DATA_WIDGET).each(function () {
-    Treeview._jQueryInterface.call($(this), 'init')
+  $(window).on(Event.LOAD_DATA_API, () => {
+    $(Selector.DATA_WIDGET).each(function () {
+      Treeview._jQueryInterface.call($(this), 'init')
+    })
   })
-})
 
-/**
- * jQuery API
- * ====================================================
- */
+  /**
+   * jQuery API
+   * ====================================================
+   */
 
-$.fn[NAME] = Treeview._jQueryInterface
-$.fn[NAME].Constructor = Treeview
-$.fn[NAME].noConflict = function () {
-  $.fn[NAME] = JQUERY_NO_CONFLICT
-  return Treeview._jQueryInterface
-}
+  $.fn[NAME] = Treeview._jQueryInterface
+  $.fn[NAME].Constructor = Treeview
+  $.fn[NAME].noConflict  = function () {
+    $.fn[NAME] = JQUERY_NO_CONFLICT
+    return Treeview._jQueryInterface
+  }
+
+  return Treeview
+})(jQuery)
 
 export default Treeview
