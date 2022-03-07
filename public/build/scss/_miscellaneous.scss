@@ -47,12 +47,12 @@
 .list-header {
   color: $gray-600;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: bold;
   padding: 10px 4px;
 }
 
 .list-seperator {
-  background-color: $card-border-color;
+  background: $card-border-color;
   height: 1px;
   margin: 15px 0 9px;
 }
@@ -99,8 +99,7 @@
 
   &.user-block-sm {
     img {
-      width: $img-size-sm;
-      height: $img-size-sm;
+      @extend .img-sm;
     }
 
     .username,
@@ -123,29 +122,29 @@
 }
 
 .img-sm {
-  height: $img-size-sm;
-  width: $img-size-sm;
+  height: 30px !important;
+  width: 30px !important;
 
   + .img-push {
-    margin-left: $img-size-sm + $img-size-push;
+    margin-left: 40px;
   }
 }
 
 .img-md {
-  width: $img-size-md;
-  height: $img-size-md;
+  width: 60px;
+  height: 60px;
 
   + .img-push {
-    margin-left: $img-size-md + $img-size-push;
+    margin-left: 70px;
   }
 }
 
 .img-lg {
-  width: $img-size-lg;
-  height: $img-size-lg;
+  width: 100px;
+  height: 100px;
 
   + .img-push {
-    margin-left: $img-size-lg + $img-size-push;
+    margin-left: 110px;
   }
 }
 
@@ -162,7 +161,7 @@
 
 // Rounded and Circle Images
 .img-rounded {
-  @include border-radius($border-radius);
+  @include border-radius($border-radius)
 }
 
 .img-circle {
@@ -216,7 +215,7 @@
 
 // General attachemnt block
 .attachment-block {
-  background-color: $gray-100;
+  background: $gray-100;
   border: 1px solid $card-border-color;
   margin-bottom: 10px;
   padding: 5px;
@@ -259,7 +258,7 @@
   .overlay {
     @include border-radius($border-radius);
     align-items: center;
-    background-color: rgba($white, .7);
+    background: rgba($white, 0.7);
     display: flex;
     justify-content: center;
     z-index: 50;
@@ -268,45 +267,21 @@
     > .fas,
     > .far,
     > .fab,
-    > .fal,
-    > .fad,
-    > .svg-inline--fa,
+    > .glyphicon,
     > .ion {
       color: $gray-800;
     }
 
     &.dark {
-      background-color: rgba($black, .5);
+      background: rgba($black, 0.5);
 
       > .fa,
       > .fas,
       > .far,
       > .fab,
-      > .fal,
-      > .fad,
-      > .svg-inline--fa,
+      > .glyphicon,
       > .ion {
         color: $gray-400;
-      }
-    }
-  }
-}
-
-.tab-pane {
-  // Box overlay for LOADING STATE effect on Tab Panels
-  > .overlay-wrapper {
-    position: relative;
-    > .overlay {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-      flex-direction: column;
-      margin-top: -$card-spacer-x;
-      margin-left: -$card-spacer-x;
-      height: calc(100% + 2 * #{$card-spacer-x});
-      width: calc(100% + 2 * #{$card-spacer-x});
-
-      &.dark {
-        color: $white;
       }
     }
   }
@@ -364,7 +339,7 @@
       border-right: $ribbon-border-size solid transparent;
       border-top: $ribbon-border-size solid #9e9e9e;
       bottom: -$ribbon-border-size;
-      content: "";
+      content: '';
       position: absolute;
     }
 
@@ -383,7 +358,6 @@
   bottom: 1.25rem;
   position: fixed;
   right: 1.25rem;
-  z-index: $zindex-control-sidebar + 1;
 
   &:focus {
     box-shadow: none;
@@ -397,13 +371,13 @@ pre {
 
 // Blockquotes styles
 blockquote {
-  background-color: $white;
+  background: $white;
   border-left: .7rem solid $primary;
   margin: 1.5em .7rem;
-  padding: .5em .7rem;
+  padding: 0.5em .7rem;
 
   .box & {
-    background-color: $gray-200;
+    background: $gray-200;
   }
 
   p:last-child {
@@ -467,75 +441,4 @@ blockquote {
   margin-top: 0;
   margin-bottom: .5rem;
   padding-bottom: .5rem;
-}
-
-
-// Badge BTN Style
-.badge-btn {
-  border-radius: $button-border-radius-xs;
-  font-size: $button-font-size-xs;
-  font-weight: 400;
-  padding: $button-padding-y-xs * 2 $button-padding-x-xs * 2;
-}
-
-.badge-btn.badge-pill {
-  padding: .375rem .6rem;
-}
-
-.dark-mode {
-  a:not(.btn):hover {
-    color: lighten($link-color, 10%);
-  }
-  .attachment-block {
-    background-color: lighten($dark, 3.75%);
-
-    .attachment-text {
-      color: $gray-400;
-    }
-  }
-  blockquote {
-    background-color: lighten($dark, 5%);
-
-    @each $color, $value in $theme-colors {
-      &.quote-#{$color} {
-        border-color: $value;
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-          color: $value;
-        }
-      }
-    }
-
-    @each $color, $value in $colors {
-      &.quote-#{$color} {
-        border-color: $value;
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-          color: $value;
-        }
-      }
-    }
-  }
-  .close,
-  .mailbox-attachment-close {
-    color: $gray-500;
-    text-shadow: 0 1px 0 $gray-700;
-  }
-  .tab-custom-content {
-    border-color: $gray-600;
-  }
-  .list-group-item {
-    background-color: $dark;
-    border-color: $gray-600;
-  }
 }

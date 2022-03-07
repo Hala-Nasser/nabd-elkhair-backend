@@ -4,22 +4,16 @@
 
 // text modification
 .text-bold {
-  &,
-  &.table td,
-  &.table th {
+  &, &.table td, &.table th {
     font-weight: 700;
   }
-}
-
-.text-xs {
-  font-size: $font-size-xs !important;
 }
 
 .text-sm {
   font-size: $font-size-sm !important;
 }
 
-.text-md {
+.text-xs {
   font-size: $font-size-base !important;
 }
 
@@ -34,18 +28,6 @@
 // text color variations
 @each $name, $color in $colors {
   .text-#{$name} {
-    color: #{$color} !important;
-  }
-}
-
-.dark-mode {
-  .text-muted {
-    color: $gray-500 !important;
-  }
-
-  @each $name, $color in $colors-alt {
-    .text-#{$name} {
-      color: #{$color} !important;
-    }
+    color: #{$color};
   }
 }

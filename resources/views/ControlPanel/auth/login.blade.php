@@ -72,7 +72,7 @@
                         @if (Route::has('register'))
                         <div class="form-group row mb-0">
                             <div class="col-md-8 offset-md-4">
-                            <a class="nav-link" href="{{ route('register') }}" style="color: #10B1B1; padding: 0.5rem 0rem;">ليس لديك حساب؟</a>
+                            <a class="nav-link" href="{{ route('register') }}" style="color: #10B1B1; padding: 0.5rem 0rem; display: inline-block;">ليس لديك حساب؟</a>
                             </div>
                         </div>
                         @endif

@@ -1,7 +1,7 @@
 //
 // Component: Main Header
 //
-
+ 
 .main-header {
   border-bottom: $main-header-bottom-border;
   z-index: $zindex-main-header;
@@ -11,32 +11,12 @@
     position: relative;
   }
 
-  .text-sm &,
-  &.text-sm {
-    .nav-link {
-      height: $nav-link-sm-height;
-      padding: $nav-link-sm-padding-y $nav-link-padding-x;
-
-      > .fa,
-      > .fas,
-      > .far,
-      > .fab,
-      > .fal,
-      > .fad,
-      > .svg-inline--fa,
-      > .ion {
-        font-size: $font-size-sm;
-      }
-    }
-
-  }
-
   .navbar-nav {
     .nav-item {
       margin: 0;
     }
 
-    &[class*="-right"] {
+    &[class*='-right'] {
       .dropdown-menu {
         left: auto;
         margin-top: -3px;
@@ -48,11 +28,6 @@
         }
       }
     }
-  }
-
-  &.dropdown-legacy .dropdown-menu {
-    top: $nav-link-height + $navbar-padding-y;
-    margin-top: 0;
   }
 }
 
@@ -80,7 +55,7 @@
 .form-control-navbar {
   border-right-width: 0;
 
-  + .input-group-append {
+  & + .input-group-append {
     margin-left: 0;
   }
 }
@@ -94,23 +69,20 @@
   .form-control-navbar,
   .btn-navbar {
     background-color: $main-header-dark-form-control-bg;
-    border-color: $main-header-dark-form-control-border-color;
+    border: $main-header-dark-form-control-border;
   }
 
   .form-control-navbar {
-    &::placeholder {
-      color: $main-header-dark-placeholder-color;
-    }
-
+    &::placeholder,
     + .input-group-append > .btn-navbar {
       color: $main-header-dark-placeholder-color;
     }
 
     &:focus {
       &,
-      + .input-group-append .btn-navbar {
+      & + .input-group-append .btn-navbar {
         background-color: $main-header-dark-form-control-focused-bg;
-        border-color: $main-header-dark-form-control-focused-border-color !important;
+        border: $main-header-dark-form-control-focused-border !important;
         color: $main-header-dark-form-control-focused-color;
       }
     }
@@ -121,59 +93,25 @@
   .form-control-navbar,
   .btn-navbar {
     background-color: $main-header-light-form-control-bg;
-    border-color: $main-header-light-form-control-border-color;
+    border: $main-header-light-form-control-border;
   }
 
   .form-control-navbar {
-    &::placeholder {
-      color: $main-header-light-placeholder-color;
-    }
-
+    &:ms-placeholder,
+    &:moz-placeholder,
+    &::moz-placeholder,
+    &::placeholder,
     + .input-group-append > .btn-navbar {
       color: $main-header-light-placeholder-color;
     }
 
     &:focus {
       &,
-      + .input-group-append .btn-navbar {
+      & + .input-group-append .btn-navbar {
         background-color: $main-header-light-form-control-focused-bg;
-        border-color: $main-header-light-form-control-focused-border-color !important;
+        border: $main-header-light-form-control-focused-border !important;
         color: $main-header-light-form-control-focused-color;
       }
     }
-  }
-
-  .navbar-search-block {
-    .form-control-navbar {
-      &:focus {
-        &,
-        + .input-group-append .btn-navbar {
-          color: $main-header-light-placeholder-color;
-        }
-      }
-    }
-  }
-}
-
-// Navbar Search
-.navbar-search-block {
-  position: absolute;
-  padding: 0 $nav-link-padding-x;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10;
-  display: none;
-  justify-content: center;
-  flex-direction: column;
-  background-color: initial;
-
-  &.navbar-search-open {
-    display: flex;
-  }
-
-  .input-group {
-    width: 100%;
   }
 }

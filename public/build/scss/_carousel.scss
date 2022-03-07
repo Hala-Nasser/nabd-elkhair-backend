@@ -2,21 +2,17 @@
 // Component: Carousel
 //
 
-.carousel-control-custom-icon {
-  .carousel-control-prev & {
-    margin-left: -20px;
-  }
-  .carousel-control-next & {
-    margin-right: 20px;
+.carousel-control {
+  &.left,
+  &.right {
+    background-image: none;
   }
 
   > .fa,
   > .fas,
   > .far,
   > .fab,
-  > .fal,
-  > .fad,
-  > .svg-inline--fa,
+  > .glyphicon,
   > .ion {
     display: inline-block;
     font-size: 40px;

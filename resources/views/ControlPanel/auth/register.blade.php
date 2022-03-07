@@ -82,7 +82,7 @@
                         @if (Route::has('login'))
                         <div class="form-group row mb-0">
                             <div class="col-md-8 offset-md-4">
-                            <a class="nav-link" href="{{ route('login') }}" style="color: #10B1B1; padding: 0.5rem 0rem;">لديك حساب؟</a>
+                            <a class="nav-link" href="{{ route('login') }}" style="color: #10B1B1; padding: 0.5rem 0rem; display: inline-block;">لديك حساب؟</a>
                             </div>
                         </div>
                         @endif
