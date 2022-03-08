@@ -146,7 +146,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ URL('Complaints') }}" class="nav-link" id="Complaints">
+                <a href="{{ URL('complaint') }}" class="nav-link" id="Complaints">
                     <i>
                       <img src="{{ asset('complaints.png') }}" style="width: 20px; height:20px;">
                     </i>
@@ -165,10 +165,9 @@
       @yield('content')
     
              <footer class="main-footer" >
-               <strong>Copyright &copy; 2021 <a href="" style="color: #178787">nabdElkhair.com</a>.</strong>
-               All rights reserved.
+               nabd elkhair &copy; 2022
                <div class="float-right d-none d-sm-inline-block">
-                 <b>Version</b> 1.0.0
+                 Version 1.0.0
                </div>
             </footer>
     </div>

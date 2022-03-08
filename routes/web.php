@@ -13,12 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/charity', [App\Http\Controllers\ControlPanel\Charity\CharityController::class, 'index'])->name('charity');
 Route::get('charity/{id}', [App\Http\Controllers\ControlPanel\Charity\CharityController::class, 'details']);
 Route::post('charity/enable/{id}', [App\Http\Controllers\ControlPanel\Charity\CharityController::class, 'enable']);
@@ -36,3 +31,5 @@ Route::get('donationtype/create', [App\Http\Controllers\ControlPanel\DonationTyp
 Route::post('donationtype/store', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'store']);
 Route::post('donationtype/delete/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'destroy']);
 Route::post('donationtype/restore/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'restore']);
+
+Route::get('/complaint', [App\Http\Controllers\ControlPanel\Complaint\ComplaintController::class, 'index'])->name('complaint');

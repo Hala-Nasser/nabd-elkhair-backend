@@ -9,10 +9,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use App\Notifications\CharityPasswordResetNotification;
+use App\Models\complaint;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Charity extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable ;
+    use SoftDeletes;
 
 
     protected $table = "_charities";
@@ -37,7 +40,7 @@ class Charity extends Authenticatable
     ];
 
     public function complaints(){
-        return $this->hasMany(Complaints::class);
+        return $this->hasMany(Complaint::class);
     }
 
 

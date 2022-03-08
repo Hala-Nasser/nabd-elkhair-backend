@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Storage;
 
 class DonationTypeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index(Request $request){
         $donation_types = DonationType::select('*')->get();
         return view('ControlPanel.donation_type.index')->with('donation_types', $donation_types);
