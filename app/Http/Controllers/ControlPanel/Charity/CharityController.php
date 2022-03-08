@@ -8,6 +8,11 @@ use App\Models\Charity;
 
 class CharityController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index(Request $request){
         $charities = Charity::select('*')->get();
         return view('ControlPanel.charity.index')->with('charities', $charities);

@@ -34,7 +34,7 @@
     <!-- Default box -->
     <div class="card" style="margin-right: 10px; margin-left: 10px">
       <div class="card-header">
-        
+
 
         <div class="card-tools">
           <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -62,6 +62,9 @@
               <th style="width: 20%">
                 سبب الشكوى
               </th>
+              <th style="width: 20%">
+                الاجراءات
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -72,16 +75,29 @@
                 <h6>{{ $complaint->id }}</h6>
               </td>
               <td style="vertical-align: middle;">
-                <h6>{{ $complaint->complainer_id }}</h6>
+                <h6>{{ $complaint->complainer_name }}</h6>
               </td>
               <td style="vertical-align: middle;">
-                <h6>{{ $complaint->defendant_id }}</h6>
+                <h6>{{ $complaint->defendant_name }}</h6>
               </td>
               <td style="vertical-align: middle;">
                 <h6>{{ $complaint->complainer_type }}</h6>
               </td>
               <td style="vertical-align: middle;">
                 <h6>{{ $complaint->complaint_reason }}</h6>
+              </td>
+              <td style="vertical-align: middle;">
+                @if ($complaint->complainer_type == "charity")
+                    <form action="{{ URL('donor/disable/' . $complaint->defendant_id) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-danger" style="margin-bottom:20px; margin-right:20px">تعطيل</button>
+                    </form>
+                    @else
+                    <form action="{{ URL('charity/disable/' . $complaint->defendant_id) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-danger" style="margin-bottom:20px; margin-right:20px">تعطيل</button>
+                    </form>
+                    @endif
               </td>
             </tr>
             @endforeach
