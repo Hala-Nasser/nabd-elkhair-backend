@@ -57,45 +57,31 @@
                 المشتكى عليه
               </th>
               <th style="width: 20%">
+                نوع المشتكي
+              </th>
+              <th style="width: 20%">
                 سبب الشكوى
               </th>
             </tr>
           </thead>
           <tbody>
 
-            @foreach($charities as $charity)
+            @foreach($complaints as $complaint)
             <tr>
-              <td>
-                <h6>{{ $charity->id }}</h6>
+              <td style="vertical-align: middle;">
+                <h6>{{ $complaint->id }}</h6>
               </td>
-              <td>
-
-                <h6>{{ $charity->name }}</h6>
-
+              <td style="vertical-align: middle;">
+                <h6>{{ $complaint->complainer_id }}</h6>
               </td>
-              <td>
-                <h6>{{ $charity->email }}</h6>
+              <td style="vertical-align: middle;">
+                <h6>{{ $complaint->defendant_id }}</h6>
               </td>
-
-              <td>
-                <a class="btn btn-info btn-sm" href="{{ URL('charity/' . $charity->id) }}">
-                  <i class="fa fa-eye">
-                  </i>
-                  عرض
-                </a>
-                <form action="{{ URL('charity/delete/' . $charity->id) }}" method="POST" style="display: inline;">
-                  @csrf
-                  <button type="submit" class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash">
-                    </i>
-                    حذف</button>
-                </form>
-                <a class="btn btn-secondary btn-sm" href="{{ URL('charity/donationtype/' . $charity->id) }}">
-                  <i>
-                    <img src="{{ asset('donation.png') }}" style="width: 19px; height:19px">
-                  </i>
-                  عرض التبرعات
-                </a>
+              <td style="vertical-align: middle;">
+                <h6>{{ $complaint->complainer_type }}</h6>
+              </td>
+              <td style="vertical-align: middle;">
+                <h6>{{ $complaint->complaint_reason }}</h6>
               </td>
             </tr>
             @endforeach

@@ -146,7 +146,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{ URL('Complaints') }}" class="nav-link" id="Complaints">
+                <a href="{{ URL('complaint') }}" class="nav-link" id="Complaints">
                     <i>
                       <img src="{{ asset('complaints.png') }}" style="width: 20px; height:20px;">
                     </i>
