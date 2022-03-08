@@ -1,7 +1,7 @@
 //
 // Component: Control Sidebar
 //
-
+ 
 html.control-sidebar-animate {
   overflow-x: hidden;
 }
@@ -11,7 +11,7 @@ html.control-sidebar-animate {
   position: absolute;
   top: $main-header-height;
   z-index: $zindex-control-sidebar;
-
+  
   &,
   &::before {
     bottom: $main-footer-height;
@@ -22,7 +22,7 @@ html.control-sidebar-animate {
   }
 
   &::before {
-    content: "";
+    content: '';
     display: block;
     position: fixed;
     top: 0;
@@ -30,44 +30,40 @@ html.control-sidebar-animate {
   }
 }
 
-body.text-sm {
-  .control-sidebar {
-    bottom: $main-footer-height-sm;
-    top: $main-header-height-sm;
-  }
-}
-
-.main-header.text-sm ~ .control-sidebar {
-  top: $main-header-height-sm;
-}
-
-.main-footer.text-sm ~ .control-sidebar {
-  bottom: $main-footer-height-sm;
-}
-
 .control-sidebar-push-slide {
-  .content-wrapper,
-  .main-footer {
-    @include transition(margin-right $transition-speed $transition-fn);
-  }
-}
-
-// Control sidebar open state
-.control-sidebar-open {
-  .control-sidebar {
-    display: block;
-
-    &,
-    &::before {
-      right: 0;
+    .content-wrapper,
+    .main-footer {
+      @include transition(margin-right $transition-speed $transition-fn);
     }
   }
 
-  &.control-sidebar-push,
-  &.control-sidebar-push-slide {
-    .content-wrapper,
-    .main-footer {
-      margin-right: $control-sidebar-width;
+// Control sidebar open state
+.control-sidebar-open {
+  @include media-breakpoint-up(md) {
+    .control-sidebar {
+      display: block;
+
+      &,
+      &::before {
+        right: 0;
+      }
+    }
+
+    &.control-sidebar-push,
+    &.control-sidebar-push-slide {
+      .content-wrapper,
+      .main-footer {
+        margin-right: $control-sidebar-width;
+      }
+    }
+  }
+
+  @include media-breakpoint-down(md) {
+    .control-sidebar {
+      &,
+      &::before {
+        right: 0;
+      }
     }
   }
 }
@@ -95,12 +91,15 @@ body.text-sm {
 
 // Dark skin
 .control-sidebar-dark {
-  background-color: $sidebar-dark-bg;
-
   &,
   a,
   .nav-link {
     color: $sidebar-dark-color;
+  }
+
+  //  Background
+  & {
+    background: $sidebar-dark-bg;
   }
 
   a:hover {
@@ -168,6 +167,8 @@ body.text-sm {
   color: lighten($sidebar-light-color, 10%);
 
   //  Background
-  background-color: $sidebar-light-bg;
-  border-left: $main-header-bottom-border;
+  & {
+    background: $sidebar-light-bg;
+    border-left: $main-header-bottom-border;
+  }
 }

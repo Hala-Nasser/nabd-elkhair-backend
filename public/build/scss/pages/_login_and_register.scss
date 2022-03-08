@@ -6,7 +6,7 @@
 .register-logo {
   font-size: 2.1rem;
   font-weight: 300;
-  margin-bottom: .9rem;
+  margin-bottom: 0.9rem;
   text-align: center;
 
   a {
@@ -16,31 +16,23 @@
 
 .login-page,
 .register-page {
-  align-items: center;
-  background-color: $gray-200;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  justify-content: center;
+  background: $gray-200;
 }
 
 .login-box,
 .register-box {
+  margin: 7% auto;
   width: 360px;
 
   @media (max-width: map-get($grid-breakpoints, sm)) {
-    margin-top: .5rem;
+    margin-top: 20px;
     width: 90%;
-  }
-
-  .card {
-    margin-bottom: 0;
   }
 }
 
 .login-card-body,
 .register-card-body {
-  background-color: $white;
+  background: $white;
   border-top: 0;
   color: #666;
   padding: 20px;
@@ -52,8 +44,7 @@
       &:focus {
         box-shadow: none;
 
-        ~ .input-group-prepend .input-group-text,
-        ~ .input-group-append .input-group-text {
+        & ~ .input-group-append .input-group-text {
           border-color: $input-focus-border-color;
         }
       }
@@ -63,8 +54,7 @@
           box-shadow: none;
         }
 
-        ~ .input-group-prepend .input-group-text,
-        ~ .input-group-append .input-group-text {
+        & ~ .input-group-append .input-group-text {
           border-color: $success;
         }
       }
@@ -74,7 +64,7 @@
           box-shadow: none;
         }
 
-        ~ .input-group-append .input-group-text {
+        & ~ .input-group-append .input-group-text {
           border-color: $danger;
         }
       }
@@ -82,9 +72,9 @@
 
     .input-group-text {
       background-color: transparent;
-      border-bottom-right-radius: $border-radius;
+      border-bottom-right-radius: $border-radius !important;
       border-left: 0;
-      border-top-right-radius: $border-radius;
+      border-top-right-radius: $border-radius !important;
       color: #777;
       transition: $input-transition;
     }
@@ -100,19 +90,4 @@
 
 .social-auth-links {
   margin: 10px 0;
-}
-
-.dark-mode {
-  .login-card-body,
-  .register-card-body {
-    background-color: $dark;
-    border-color: $gray-600;
-    color: $white;
-  }
-  .login-logo,
-  .register-logo {
-    a {
-      color: $white;
-    }
-  }
 }

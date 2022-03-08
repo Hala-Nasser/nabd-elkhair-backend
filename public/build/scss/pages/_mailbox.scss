@@ -41,7 +41,7 @@
 }
 
 .mailbox-attachments {
-  @include list-unstyled ();
+  @extend .list-unstyled;
   li {
     border: 1px solid #eee;
     float: left;
@@ -53,7 +53,7 @@
 
 .mailbox-attachment-name {
   color: #666;
-  font-weight: 700;
+  font-weight: bold;
 }
 
 .mailbox-attachment-icon,
@@ -63,7 +63,7 @@
 }
 
 .mailbox-attachment-info {
-  background-color: $gray-100;
+  background: $gray-100;
   padding: 10px;
 }
 
@@ -73,7 +73,7 @@
 
   > span {
     display: inline-block;
-    padding-top: .75rem;
+    padding-top: 0.75rem;
   }
 }
 

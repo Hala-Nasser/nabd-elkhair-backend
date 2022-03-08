@@ -1,18 +1,17 @@
 //
 // Component: Info Box
 //
-
+ 
 .info-box {
+  @extend .d-flex;
+  @extend .mb-3;
   @include box-shadow($card-shadow);
   @include border-radius($border-radius);
 
-  background-color: $white;
-  display: flex;
-  margin-bottom: map-get($spacers, 3);
+  background: $white;
   min-height: 80px;
   padding: .5rem;
   position: relative;
-  width: 100%;
 
   .progress {
     background-color: rgba($black, .125);
@@ -25,14 +24,16 @@
   }
 
   .info-box-icon {
+    @extend .d-flex;
+    @extend .align-items-center;
+    @extend .justify-content-center;
+
     @if $enable-rounded {
       border-radius: $border-radius;
     }
 
-    align-items: center;
-    display: flex;
+    display: block;
     font-size: 1.875rem;
-    justify-content: center;
     text-align: center;
     width: 70px;
 
@@ -42,17 +43,12 @@
   }
 
   .info-box-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    line-height: 1.8;
     flex: 1;
-    padding: 0 10px;
+    padding: 5px 10px;
   }
 
   .info-box-number {
     display: block;
-    margin-top: .25rem;
     font-weight: $font-weight-bold;
   }
 
@@ -140,25 +136,6 @@
       .progress-description {
         @include font-size(1rem);
         display: block;
-      }
-    }
-  }
-}
-
-.dark-mode {
-  .info-box {
-    background-color: $dark;
-    color: $white;
-    @each $name, $color in $theme-colors-alt {
-      .info-box {
-        .bg-#{$name},
-        .bg-gradient-#{$name} {
-          color: color-yiq($color);
-
-          .progress-bar {
-            background-color: color-yiq($color);
-          }
-        }
       }
     }
   }

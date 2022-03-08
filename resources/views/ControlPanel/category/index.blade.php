@@ -78,7 +78,7 @@
                           
                       </td>
                       <td>
-                        <img alt="Avatar" src="{{asset('storage/uploads/images/'.$category->image)}}"  style="width:100px; height:80px; border-radius: 8px; object-fit: cover;">
+                        <img alt="Avatar" src="{{asset('public/uploads/images/'.$category->image)}}"  style="width:100px; height:80px; border-radius: 8px; object-fit: cover;">
                       </td>
                     
                       <td class="project-actions text-right">
