@@ -16,3 +16,17 @@ use App\Http\Controllers\API\Charity\CharityUserController;
 
 Route::post('charity/register', [CharityUserController::class,'register']);
 Route::post('charity/login',[CharityUserController::class, 'login']);
+Route::post('charity/forgotPassword',[CharityUserController::class, 'forgotPassword']);
+Route::post('charity/resetPassword',[CharityUserController::class, 'resetPassword']);
+
+Route::group( ['prefix' => 'charity','middleware' => ['auth:charity-api','scopes:charity'] ],function(){
+    // authenticated staff routes here 
+        Route::post('changePassword', [CharityUserController::class,'setNewAccountPassword']);
+        Route::post('addcomplaint', [CharityUserController::class,'addComplaint']);
+        Route::post('addCampaign',[CharityUserController::class, 'addCampaign']);
+        Route::post('updateProfile',[CharityUserController::class, 'updateProfile']);
+        Route::post('updateCampaign',[CharityUserController::class, 'updateCampaign']);
+        Route::delete('campaigns/{id}',[CharityUserController::class, 'deleteCampaign']);
+        Route::get('logout',[CharityUserController::class, 'logout']);
+       
+ });

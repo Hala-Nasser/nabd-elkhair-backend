@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => 'admin',
-        'passwords' => 'users',
+        'passwords' => 'admins',
     ],
 
     /*
@@ -41,13 +41,22 @@ return [
             'provider' => 'admins',
         ],
     
-        'charity-api' => [
+        'charity' => [
             'driver' => 'session',
             'provider' => 'charities',
         ],
+        
+        'charity-api' => [
+            'driver' => 'passport',
+            'provider' => 'charities',
+        ],
 
-        'donor-api' => [
+        'donor' => [
             'driver' => 'session',
+            'provider' => 'donors',
+        ],
+        'donor-api' => [
+            'driver' => 'passport',
             'provider' => 'donors',
         ],
     ],
@@ -107,8 +116,8 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
+        'admins' => [
+            'provider' => 'admins',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
