@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Charity; 
 use App\Models\Complaint;
 use App\Models\Campaign;
+use App\Models\Donor;
 use Validator;
 use Auth;
 use Illuminate\Support\Str;
@@ -169,7 +170,6 @@ class CharityUserController extends Controller
     { 
             $validator = Validator::make($request->all(), [ 
             'defendant_id' => 'required', 
-            'complainer_type' => 'required',
             'complaint_reason' => 'required',
         ]);
 
@@ -177,17 +177,23 @@ class CharityUserController extends Controller
             return response()->json(['error'=>$validator->errors()], 401);            
         }
 
+        $user = Donor::where('id',$request['defendant_id'])->first();
     
-        $data = $request->all();
-        $data['complainer_id'] = auth()->guard('charity-api')->user()->id;
-        $response = Complaint::create($data);
+        if($user){
+    
+            $data = $request->all();
+            $data['complainer_id'] = auth()->guard('charity-api')->user()->id;
+            $data['complainer_type'] = 'Charity';
+            $response = Complaint::create($data);
 
-        if($response){
-              return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
+            if($response){
+                return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
+            }else{
+                return response()->json(['status'=>'fail'], 500); 
+            }
         }else{
-            return response()->json(['status'=>'fail'], 500); 
+            return response()->json(['message' => 'defendant User Not Found'],400);
         }
-        
     }
 
     public function addCampaign(Request $request) 
