@@ -41,13 +41,22 @@ return [
             'provider' => 'admins',
         ],
     
-        'charity-api' => [
+        'charity' => [
             'driver' => 'session',
             'provider' => 'charities',
         ],
+        
+        'charity-api' => [
+            'driver' => 'passport',
+            'provider' => 'charities',
+        ],
 
-        'donor-api' => [
+        'donor' => [
             'driver' => 'session',
+            'provider' => 'donors',
+        ],
+        'donor-api' => [
+            'driver' => 'passport',
             'provider' => 'donors',
         ],
     ],

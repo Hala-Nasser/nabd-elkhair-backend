@@ -28,7 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         Passport::routes(); 
         Passport::tokensCan([
             'user' => 'User Type',
-            'admin' => 'Admin User Type',
+            'charity' => 'charity User Type',
             'donor' => 'Donor User Type'
         ]);
         //

@@ -35,10 +35,10 @@ class DonorController extends Controller
             return response()->json(['error' => $validator->errors()->all()]);
         }
         
-        if(auth()->guard('donor-api')->attempt(['email' => request('email'), 'password' => request('password')])){
-            $user = Donor::select('donors.*')->find(auth()->guard('donor-api')->user()->id);
+        if(auth()->guard('donor')->attempt(['email' => request('email'), 'password' => request('password')])){
+            $user = Donor::select('donors.*')->find(auth()->guard('donor')->user()->id);
             $success =  $user;
-            $success['token'] =  $user->createToken('MyApp',['donor-api'])->accessToken; 
+            $success['token'] =  $user->createToken('MyApp',['donor'])->accessToken; 
 
             return response()->json($success, 200);
         }else{ 
