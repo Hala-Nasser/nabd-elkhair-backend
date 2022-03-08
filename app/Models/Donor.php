@@ -11,6 +11,7 @@ use Laravel\Passport\HasApiTokens;
 class Donor extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

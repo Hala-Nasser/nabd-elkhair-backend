@@ -14,6 +14,7 @@ class Charity extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable ;
 
+
     protected $table = "_charities";
     /**
      * The attributes that are mass assignable.

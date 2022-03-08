@@ -40,7 +40,7 @@
 }
 
 .progress-group {
-  margin-bottom: map-get($spacers, 2);
+  @extend .mb-2;
 }
 
 // size variation
@@ -62,11 +62,5 @@
     .progress {
       margin: 0;
     }
-  }
-}
-
-.dark-mode {
-  .progress {
-    background: lighten($dark, 7.5%);
   }
 }

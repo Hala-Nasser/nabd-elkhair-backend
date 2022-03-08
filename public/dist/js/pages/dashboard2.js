@@ -1,6 +1,5 @@
-/* global Chart:false */
-
 $(function () {
+
   'use strict'
 
   /* ChartJS
@@ -9,110 +8,108 @@ $(function () {
    */
 
   //-----------------------
-  // - MONTHLY SALES CHART -
+  //- MONTHLY SALES CHART -
   //-----------------------
 
   // Get context with jQuery - using jQuery's .get() method.
   var salesChartCanvas = $('#salesChart').get(0).getContext('2d')
 
   var salesChartData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [
       {
-        label: 'Digital Goods',
-        backgroundColor: 'rgba(60,141,188,0.9)',
-        borderColor: 'rgba(60,141,188,0.8)',
-        pointRadius: false,
-        pointColor: '#3b8bba',
-        pointStrokeColor: 'rgba(60,141,188,1)',
-        pointHighlightFill: '#fff',
+        label               : 'Digital Goods',
+        backgroundColor     : 'rgba(60,141,188,0.9)',
+        borderColor         : 'rgba(60,141,188,0.8)',
+        pointRadius          : false,
+        pointColor          : '#3b8bba',
+        pointStrokeColor    : 'rgba(60,141,188,1)',
+        pointHighlightFill  : '#fff',
         pointHighlightStroke: 'rgba(60,141,188,1)',
-        data: [28, 48, 40, 19, 86, 27, 90]
+        data                : [28, 48, 40, 19, 86, 27, 90]
       },
       {
-        label: 'Electronics',
-        backgroundColor: 'rgba(210, 214, 222, 1)',
-        borderColor: 'rgba(210, 214, 222, 1)',
-        pointRadius: false,
-        pointColor: 'rgba(210, 214, 222, 1)',
-        pointStrokeColor: '#c1c7d1',
-        pointHighlightFill: '#fff',
+        label               : 'Electronics',
+        backgroundColor     : 'rgba(210, 214, 222, 1)',
+        borderColor         : 'rgba(210, 214, 222, 1)',
+        pointRadius         : false,
+        pointColor          : 'rgba(210, 214, 222, 1)',
+        pointStrokeColor    : '#c1c7d1',
+        pointHighlightFill  : '#fff',
         pointHighlightStroke: 'rgba(220,220,220,1)',
-        data: [65, 59, 80, 81, 56, 55, 40]
-      }
+        data                : [65, 59, 80, 81, 56, 55, 40]
+      },
     ]
   }
 
   var salesChartOptions = {
-    maintainAspectRatio: false,
-    responsive: true,
+    maintainAspectRatio : false,
+    responsive : true,
     legend: {
       display: false
     },
     scales: {
       xAxes: [{
-        gridLines: {
-          display: false
+        gridLines : {
+          display : false,
         }
       }],
       yAxes: [{
-        gridLines: {
-          display: false
+        gridLines : {
+          display : false,
         }
       }]
     }
   }
 
   // This will get the first returned node in the jQuery collection.
-  // eslint-disable-next-line no-unused-vars
-  var salesChart = new Chart(salesChartCanvas, {
-    type: 'line',
-    data: salesChartData,
-    options: salesChartOptions
-  }
+  var salesChart = new Chart(salesChartCanvas, { 
+      type: 'line', 
+      data: salesChartData, 
+      options: salesChartOptions
+    }
   )
 
   //---------------------------
-  // - END MONTHLY SALES CHART -
+  //- END MONTHLY SALES CHART -
   //---------------------------
 
   //-------------
-  // - PIE CHART -
+  //- PIE CHART -
   //-------------
   // Get context with jQuery - using jQuery's .get() method.
-  var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
-  var pieData = {
-    labels: [
-      'Chrome',
-      'IE',
-      'FireFox',
-      'Safari',
-      'Opera',
-      'Navigator'
-    ],
-    datasets: [
-      {
-        data: [700, 500, 400, 600, 300, 100],
-        backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de']
-      }
-    ]
-  }
-  var pieOptions = {
-    legend: {
-      display: false
+    var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+    var pieData        = {
+      labels: [
+          'Chrome', 
+          'IE',
+          'FireFox', 
+          'Safari', 
+          'Opera', 
+          'Navigator', 
+      ],
+      datasets: [
+        {
+          data: [700,500,400,600,300,100],
+          backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+        }
+      ]
     }
-  }
-  // Create pie or douhnut chart
-  // You can switch between pie and douhnut using the method below.
-  // eslint-disable-next-line no-unused-vars
-  var pieChart = new Chart(pieChartCanvas, {
-    type: 'doughnut',
-    data: pieData,
-    options: pieOptions
-  })
+    var pieOptions     = {
+      legend: {
+        display: false
+      }
+    }
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    var pieChart = new Chart(pieChartCanvas, {
+      type: 'doughnut',
+      data: pieData,
+      options: pieOptions      
+    })
 
   //-----------------
-  // - END PIE CHART -
+  //- END PIE CHART -
   //-----------------
 
   /* jVector Maps
@@ -120,14 +117,238 @@ $(function () {
    * Create a world map with markers
    */
   $('#world-map-markers').mapael({
-    map: {
-      name: 'usa_states',
-      zoom: {
-        enabled: true,
-        maxLevel: 10
+      map: {
+        name : "world_countries",
+        zoom: {
+          enabled: true,
+          maxLevel: 10
+        },
+        defaultPlot: {
+          size: 12,
+          attrs: {
+            "stroke-width": 0,
+            "stroke-linejoin": "round"
+          },
+          attrsHover: {
+            size: 15,
+            "fill": '#28a745',
+            "stroke-width": 0,
+            animDuration: 0
+          },
+        }
+      },
+      plots: {
+        "marker1": {
+          latitude: 41.90,
+          longitude: 12.45,
+          href: '#',
+          tooltip: {
+            content: 'Vatican City'
+          }
+        },
+        "marker2": {
+          latitude: 43.73,
+          longitude: 7.41,
+          href: '#',
+          tooltip: {
+            content: 'Monaco'
+          }
+        },
+        "marker3": {
+          latitude: -0.52,
+          longitude: 166.93,
+          href: '#',
+          tooltip: {
+            content: 'Nauru'
+          }
+        },
+        "marker4": {
+          latitude: -8.51,
+          longitude: 179.21,
+          href: '#',
+          tooltip: {
+            content: 'Tuvalu'
+          }
+        },
+        "marker5": {
+          latitude: 43.93,
+          longitude: 12.46,
+          href: '#',
+          tooltip: {
+            content: 'San Marino'
+          }
+        },
+        "marker6": {
+          latitude: 47.14,
+          longitude: 9.52,
+          href: '#',
+          tooltip: {
+            content: 'Liechtenstein'
+          }
+        },
+        "marker7": {
+          latitude: 7.11,
+          longitude: 171.06,
+          href: '#',
+          tooltip: {
+            content: 'Marshall Islands'
+          }
+        },
+        "marker8": {
+          latitude: 17.3,
+          longitude: -62.73,
+          href: '#',
+          tooltip: {
+            content: 'Saint Kitts and Nevis'
+          }
+        },
+        "marker9": {
+          latitude: 3.2,
+          longitude: 73.22,
+          href: '#',
+          tooltip: {
+            content: 'Maldives'
+          }
+        },
+        "marker10": {
+          latitude: 35.88,
+          longitude: 14.5,
+          href: '#',
+          tooltip: {
+            content: 'Malta'
+          }
+        },
+        "marker11": {
+          latitude: 12.05,
+          longitude: -61.75,
+          href: '#',
+          tooltip: {
+            content: 'Grenada'
+          }
+        },
+        "marker12": {
+          latitude: 13.16,
+          longitude: -61.23,
+          href: '#',
+          tooltip: {
+            content: 'Saint Vincent and the Grenadines'
+          }
+        },
+        "marker13": {
+          latitude: 13.16,
+          longitude: -59.55,
+          href: '#',
+          tooltip: {
+            content: 'Barbados'
+          }
+        },
+        "marker14": {
+          latitude: 17.11,
+          longitude: -61.85,
+          href: '#',
+          tooltip: {
+            content: 'Antigua and Barbuda'
+          }
+        },
+        "marker15": {
+          latitude: -4.61,
+          longitude: 55.45,
+          href: '#',
+          tooltip: {
+            content: 'Seychelles'
+          }
+        },
+        "marker16": {
+          latitude: 7.35,
+          longitude: 134.46,
+          href: '#',
+          tooltip: {
+            content: 'Palau'
+          }
+        },
+        "marker17": {
+          latitude: 42.5,
+          longitude: 1.51,
+          href: '#',
+          tooltip: {
+            content: 'Andorra'
+          }
+        },
+        "marker18": {
+          latitude: 14.01,
+          longitude: -60.98,
+          href: '#',
+          tooltip: {
+            content: 'Saint Lucia'
+          }
+        },
+        "marker19": {
+          latitude: 6.91,
+          longitude: 158.18,
+          href: '#',
+          tooltip: {
+            content: 'Federated States of Micronesia'
+          }
+        },
+        "marker20": {
+          latitude: 1.3,
+          longitude: 103.8,
+          href: '#',
+          tooltip: {
+            content: 'Singapore'
+          }
+        },
+        "marker21": {
+          latitude: 1.46,
+          longitude: 173.03,
+          href: '#',
+          tooltip: {
+            content: 'Kiribati'
+          }
+        },
+        "marker22": {
+          latitude: -21.13,
+          longitude: -175.2,
+          href: '#',
+          tooltip: {
+            content: 'Tonga'
+          }
+        },
+        "marker23": {
+          latitude: 15.3,
+          longitude: -61.38,
+          href: '#',
+          tooltip: {
+            content: 'Dominica'
+          }
+        },
+        "marker24": {
+          latitude: -20.2,
+          longitude: 57.5,
+          href: '#',
+          tooltip: {
+            content: 'Mauritius'
+          }
+        },
+        "marker25": {
+          latitude: 26.02,
+          longitude: 50.55,
+          href: '#',
+          tooltip: {
+            content: 'Bahrain'
+          }
+        },
+        "marker26": {
+          latitude: 0.33,
+          longitude: 6.73,
+          href: '#',
+          tooltip: {
+            content: 'São Tomé and Príncipe'
+          }
+        }
       }
     }
-  })
+  );
 
   // $('#world-map-markers').vectorMap({
   //   map              : 'world_en',
@@ -265,6 +486,5 @@ $(function () {
   //     }
   //   ]
   // })
-})
 
-// lgtm [js/unused-local-variable]
+})

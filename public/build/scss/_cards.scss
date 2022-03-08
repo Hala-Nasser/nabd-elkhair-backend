@@ -2,18 +2,9 @@
 // Component: Cards
 //
 
-// Color variants
-@each $name, $color in $theme-colors {
-  @include cards-variant($name, $color);
-}
-
-@each $name, $color in $colors {
-  @include cards-variant($name, $color);
-}
-
 .card {
+  @extend .mb-3;
   @include box-shadow($card-shadow);
-  margin-bottom: map-get($spacers, 3);
 
   &.bg-dark {
     .card-header {
@@ -34,17 +25,13 @@
     position: fixed;
     top: 0;
     width: 100% !important;
-    z-index: $zindex-modal-backdrop;
+    z-index: 9999;
 
     &.was-collapsed .card-body {
       display: block !important;
     }
 
-    .card-body {
-      overflow: auto;
-    }
-
-    [data-card-widgett="collapse"] {
+    [data-widget='collapse'] {
       display: none;
     }
 
@@ -88,113 +75,6 @@
   .border-left {
     border-left: 1px solid $card-border-color;
   }
-
-  &.card-tabs {
-    &:not(.card-outline) {
-      > .card-header {
-        border-bottom: 0;
-
-        .nav-item {
-          &:first-child .nav-link {
-            border-left-color: transparent;
-          }
-        }
-      }
-    }
-
-    &.card-outline {
-      .nav-item {
-        border-bottom: 0;
-
-        &:first-child .nav-link {
-          border-left: 0;
-          margin-left: 0;
-        }
-      }
-    }
-
-    .card-tools {
-      margin: .3rem .5rem;
-    }
-
-    &:not(.expanding-card).collapsed-card {
-      .card-header {
-        border-bottom: 0;
-
-        .nav-tabs {
-          border-bottom: 0;
-
-          .nav-item {
-            margin-bottom: 0;
-          }
-        }
-      }
-    }
-
-    &.expanding-card {
-      .card-header {
-        .nav-tabs {
-          .nav-item {
-            margin-bottom: -1px;
-          }
-        }
-      }
-    }
-  }
-
-  &.card-outline-tabs {
-    border-top: 0;
-
-    .card-header {
-      .nav-item {
-        &:first-child .nav-link {
-          border-left: 0;
-          margin-left: 0;
-        }
-      }
-
-      a {
-        border-top: 3px solid transparent;
-
-        &:hover {
-          border-top: 3px solid $nav-tabs-border-color;
-        }
-
-        &.active {
-          &:hover {
-            margin-top: 0;
-          }
-        }
-      }
-    }
-
-    .card-tools {
-      margin: .5rem .5rem .3rem;
-    }
-
-    &:not(.expanding-card).collapsed-card .card-header {
-      border-bottom: 0;
-
-      .nav-tabs {
-        border-bottom: 0;
-
-        .nav-item {
-          margin-bottom: 0;
-        }
-      }
-    }
-
-    &.expanding-card {
-      .card-header {
-        .nav-tabs {
-          .nav-item {
-            margin-bottom: -1px;
-          }
-        }
-      }
-    }
-  }
-
 }
 
 // Maximized Card Body Scroll fix
@@ -206,15 +86,15 @@ html.maximized-card {
 .card-header,
 .card-body,
 .card-footer {
-  @include clearfix ();
+  @include clearfix;
 }
 
 // Box header
 .card-header {
   background-color: transparent;
   border-bottom: 1px solid $card-border-color;
-  padding: (($card-spacer-y / 2) * 2) $card-spacer-x;
   position: relative;
+  padding: (($card-spacer-y / 2) * 2) $card-spacer-x;
 
   @if $enable-rounded {
     @include border-top-radius($border-radius);
@@ -226,16 +106,9 @@ html.maximized-card {
 
   > .card-tools {
     float: right;
-    margin-right: -$card-spacer-x / 2;
+    margin-right: -$card-spacer-x/2;
 
-    .input-group,
-    .nav,
-    .pagination {
-      margin-bottom: -$card-spacer-y / 2.5;
-      margin-top: -$card-spacer-y / 2.5;
-    }
-
-    [data-toggle="tooltip"] {
+    [data-toggle='tooltip'] {
       position: relative;
     }
   }
@@ -248,14 +121,9 @@ html.maximized-card {
   margin: 0;
 }
 
-.card-text {
-  clear: both;
-}
-
-
 // Box Tools Buttons
 .btn-tool {
-  background-color: transparent;
+  background: transparent;
   color: $gray-500;
   font-size: $font-size-sm;
   margin: -(($card-spacer-y / 2) * 2) 0;
@@ -272,22 +140,12 @@ html.maximized-card {
   }
 }
 
-.text-sm {
-  .card-title {
-    font-size: $card-title-font-size-sm;
-  }
-
-  .nav-link {
-    padding: $card-nav-link-padding-sm-y $card-nav-link-padding-sm-x;
-  }
-}
-
 // Box Body
 .card-body {
   // @include border-radius-sides(0, 0, $border-radius, $border-radius);
-  // .no-header & {
-  //   @include border-top-radius($border-radius);
-  // }
+  .no-header & {
+    // @include border-top-radius($border-radius);
+  }
 
   // Tables within the box body
   > .table {
@@ -314,7 +172,7 @@ html.maximized-card {
 }
 
 .chart-legend {
-  @include list-unstyled ();
+  @extend .list-unstyled;
   margin: 10px 0;
 
   > li {
@@ -327,10 +185,10 @@ html.maximized-card {
 
 // Comment Box
 .card-comments {
-  background-color: $gray-100;
+  background: $gray-100;
 
   .card-comment {
-    @include clearfix ();
+    @include clearfix;
     border-bottom: 1px solid $gray-200;
     padding: 8px 0;
 
@@ -343,8 +201,7 @@ html.maximized-card {
     }
 
     img {
-      height: $card-img-size;
-      width: $card-img-size;
+      @extend .img-sm;
       float: left;
     }
   }
@@ -379,7 +236,7 @@ html.maximized-card {
   // Todo list element
   > li {
     @include border-radius(2px);
-    background-color: $gray-100;
+    background: $gray-100;
     border-left: 2px solid $gray-200;
     color: $gray-700;
     margin-bottom: 2px;
@@ -389,7 +246,7 @@ html.maximized-card {
       margin-bottom: 0;
     }
 
-    > input[type="checkbox"] {
+    > input[type='checkbox'] {
       margin: 0 10px 0 5px;
     }
 
@@ -407,7 +264,7 @@ html.maximized-card {
 
     // Tools and options box
     .tools {
-      color: theme-color("danger");
+      color: theme-color('danger');
       display: none;
       float: right;
 
@@ -416,9 +273,7 @@ html.maximized-card {
       > .fas,
       > .far,
       > .fab,
-      > .fal,
-      > .fad,
-      > .svg-inline--fa,
+      > .glyphicon,
       > .ion {
         cursor: pointer;
         margin-right: 5px;
@@ -438,7 +293,7 @@ html.maximized-card {
       }
 
       .badge {
-        background-color: $gray-500 !important;
+        background: $gray-500 !important;
       }
     }
   }
@@ -470,76 +325,11 @@ html.maximized-card {
   max-width: 200px;
 }
 
-// Nav Tabs override
-.card-default {
-  .nav-item {
-    &:first-child .nav-link {
-      border-left: 0;
-    }
-  }
+// Color variants
+@each $name, $color in $theme-colors {
+  @include cards-variant($name, $color);
 }
 
-.dark-mode {
-
-  // Color variants
-  @each $name, $color in $theme-colors-alt {
-    @include cards-variant($name, $color);
-  }
-
-  @each $name, $color in $colors-alt {
-    @include cards-variant($name, $color);
-  }
-
-  .card {
-    background-color: $dark;
-    color: $white;
-
-    .card {
-      background-color: lighten($dark, 5%);
-      color: $white;
-    }
-    .nav.flex-column > li {
-      border-bottom-color: $gray-600;
-    }
-    .card-footer {
-      background-color: rgba($black, .1);
-    }
-    &.card-outline-tabs .card-header a:hover {
-      border-color: $gray-600;
-      border-bottom-color: transparent;
-    }
-    &:not(.card-outline) > .card-header a.active {
-      color: $white;
-    }
-  }
-
-  .card-comments {
-    background-color: lighten($dark, 1.25%);
-    .username {
-      color: $gray-400;
-    }
-    .card-comment {
-      border-bottom-color: lighten($dark, 7.5%);
-    }
-  }
-
-  .todo-list > li {
-    background-color: lighten($dark, 5%);
-    border-color: lighten($dark, 7.5%);
-    color: $white;
-  }
-
-  .todo-list {
-    @each $name, $color in $theme-colors-alt {
-      .#{$name} {
-        border-left-color: $color;
-      }
-    }
-
-    @each $name, $color in $colors-alt {
-      .#{$name} {
-        border-left-color: $color;
-      }
-    }
-  }
+@each $name, $color in $colors {
+  @include cards-variant($name, $color);
 }
