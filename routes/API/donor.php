@@ -16,3 +16,9 @@ use App\Http\Controllers\API\Donor\DonorController;
 */
 Route::post('donor/register', [DonorController::class, 'register']);
 Route::post('donor/login', [DonorController::class, 'login']);
+
+Route::group( ['prefix' => 'donor','middleware' => ['auth:donor-api','scopes:donor'] ],function(){
+    // authenticated staff routes here 
+        Route::post('addcomplaint', [DonorController::class,'addComplaint']);
+       
+ });

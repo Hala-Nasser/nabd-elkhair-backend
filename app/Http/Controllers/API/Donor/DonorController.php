@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Donor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Donor; 
+use App\Models\Complaint;
 use Illuminate\Support\Facades\Auth; 
 use Validator;
 
@@ -89,4 +90,29 @@ if ($validator->fails()) {
         return response()->json(['success'=>$success], $this-> successStatus); 
     }
 
+
+    public function addComplaint(Request $request) 
+    { 
+            $validator = Validator::make($request->all(), [ 
+            'defendant_id' => 'required', 
+            'complainer_type' => 'required',
+            'complaint_reason' => 'required',
+        ]);
+
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);            
+        }
+
+    
+        $data = $request->all();
+        $data['complainer_id'] = auth()->guard('donor-api')->user()->id;
+        $response = Complaint::create($data);
+
+        if($response){
+              return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
+        }else{
+            return response()->json(['status'=>'fail'], 500); 
+        }
+        
+    }
 }
