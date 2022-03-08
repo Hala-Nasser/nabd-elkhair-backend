@@ -22,7 +22,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>الجمعيات</h1>
+          <h1>الشكاوي</h1>
         </div>
       </div>
     </div><!-- /.container-fluid -->
@@ -32,7 +32,7 @@
   <section class="content">
 
     <!-- Default box -->
-    <div class="card" style="margin-right: 10px;">
+    <div class="card" style="margin-right: 10px; margin-left: 10px">
       <div class="card-header">
         
 
@@ -41,7 +41,7 @@
             <i class="fas fa-minus"></i>
           </button>
         </div>
-        <h3 class="card-title">الجمعيات</h3>
+        <h3 class="card-title">الشكاوي</h3>
       </div>
       <div class="card-body p-0">
         <table class="table table-striped projects">
@@ -51,13 +51,13 @@
                 #
               </th>
               <th style="width: 20%">
-                الاسم
+                المشتكي
               </th>
               <th style="width: 20%">
-                البريد الالكتروني
+                المشتكى عليه
               </th>
               <th style="width: 20%">
-                الاجراءات
+                سبب الشكوى
               </th>
             </tr>
           </thead>
@@ -78,18 +78,24 @@
               </td>
 
               <td>
-                <a class="btn btn-info btn-sm" href="{{ URL('category/' . $charity->id . '/edit') }}">
-                  <i class="fas fa-pencil-alt">
+                <a class="btn btn-info btn-sm" href="{{ URL('charity/' . $charity->id) }}">
+                  <i class="fa fa-eye">
                   </i>
-                  Edit
+                  عرض
                 </a>
-                <form action="{{ URL('category/delete/' . $charity->id) }}" method="POST" style="display: inline;">
+                <form action="{{ URL('charity/delete/' . $charity->id) }}" method="POST" style="display: inline;">
                   @csrf
                   <button type="submit" class="btn btn-danger btn-sm">
                     <i class="fas fa-trash">
                     </i>
-                    Delete</button>
+                    حذف</button>
                 </form>
+                <a class="btn btn-secondary btn-sm" href="{{ URL('charity/donationtype/' . $charity->id) }}">
+                  <i>
+                    <img src="{{ asset('donation.png') }}" style="width: 19px; height:19px">
+                  </i>
+                  عرض التبرعات
+                </a>
               </td>
             </tr>
             @endforeach
