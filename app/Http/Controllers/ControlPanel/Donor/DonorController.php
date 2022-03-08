@@ -8,6 +8,11 @@ use App\Models\Donor;
 
 class DonorController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index(Request $request){
         $donors = Donor::select('*')->get();
         return view('ControlPanel.donor.index')->with('donors', $donors);

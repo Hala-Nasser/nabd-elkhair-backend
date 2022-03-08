@@ -10,19 +10,24 @@ use App\Models\Donor;
 
 class ComplaintController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index(Request $request){
         $complaints = Complaint::select('*')->get();
         foreach ($complaints as $complaint) {
             if ($complaint->complainer_type == "charity"){
                 $charity = Charity::find($complaint->complainer_id);
-                $complaint->complainer_id = $charity->name;
+                $complaint->complainer_name = $charity->name;
                 $donor = Donor::find($complaint->defendant_id);
-                $complaint->defendant_id = $donor->name;
+                $complaint->defendant_name = $donor->name;
             }else{
                 $donor = Donor::find($complaint->complainer_id);
-                $complaint->complainer_id = $donor->name;
+                $complaint->complainer_name = $donor->name;
                 $charity = Charity::find($complaint->defendant_id);
-                $complaint->defendant_id = $charity->name;
+                $complaint->defendant_name = $charity->name;
             }
           }
         return view('ControlPanel.complaint.index')->with('complaints', $complaints);
