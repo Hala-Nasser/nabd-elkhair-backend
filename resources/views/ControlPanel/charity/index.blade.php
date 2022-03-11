@@ -47,16 +47,16 @@
         <table class="table table-striped projects">
           <thead>
             <tr>
-              <th style="width: 1%">
+              <th style="width: 1%; text-align:center">
                 #
               </th>
-              <th style="width: 20%">
+              <th style="width: 20%; text-align:center">
                 الاسم
               </th>
-              <th style="width: 20%">
+              <th style="width: 30%; text-align:center">
                 البريد الالكتروني
               </th>
-              <th style="width: 20%">
+              <th style="width: 30%; text-align:center">
                 الاجراءات
               </th>
             </tr>
@@ -65,19 +65,16 @@
 
             @foreach($charities as $charity)
             <tr>
-              <td>
-                <h6>{{ $charity->id }}</h6>
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $charity->id }}</h6>
               </td>
-              <td>
-
-                <h6>{{ $charity->name }}</h6>
-
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $charity->name }}</h6>
               </td>
-              <td>
-                <h6>{{ $charity->email }}</h6>
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $charity->email }}</h6>
               </td>
-
-              <td>
+              <td style="vertical-align: middle; text-align:center">
                 <a class="btn btn-info btn-sm" href="{{ URL('charity/' . $charity->id) }}">
                   <i class="fa fa-eye">
                   </i>
@@ -90,7 +87,7 @@
                     </i>
                     حذف</button>
                 </form>
-                <a class="btn btn-secondary btn-sm" href="{{ URL('charity/donationtype/' . $charity->id) }}">
+                <a class="btn btn-secondary btn-sm" href="{{ URL('charity/donation/' . $charity->id) }}">
                   <i>
                     <img src="{{ asset('donation.png') }}" style="width: 19px; height:19px">
                   </i>

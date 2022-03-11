@@ -10988,7 +10988,7 @@ body,
 
 .main-sidebar, .main-sidebar::before {
   transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
-  width: 250px;
+  width: 180px;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -50,13 +50,13 @@
                 <table class="table table-striped projects">
                     <thead>
                         <tr>
-                            <th style="width: 1%">
+                            <th style="width: 1%; text-align:center">
                                 #
                             </th>
-                            <th style="width: 20%">
+                            <th style="width: 20%; text-align:center">
                                 الصورة
                             </th>
-                            <th style="width: 20%">
+                            <th style="width: 20%; text-align:center">
                                 الاجراءات
                             </th>
                         </tr>
@@ -65,14 +65,14 @@
 
                         @foreach($donation_types as $donation_type)
                         <tr>
-                            <td>
+                            <td style="vertical-align: middle; text-align:center">
                                 <h6>{{ $donation_type->id }}</h6>
                             </td>
-                            <td>
-                                <img alt="Avatar" src="{{asset('storage/uploads/images/'.$donation_type->image)}}"  style="width:80px; height:60px; border-radius: 8px; object-fit: cover;">
+                            <td style="vertical-align: middle; text-align:center">
+                                <img alt="Avatar" src="{{asset('storage/uploads/images/'.$donation_type->image)}}"  style="width:60px; height:40px; border-radius: 8px; object-fit: contain;">
                             </td>
 
-                            <td style="vertical-align: middle;">
+                            <td style="vertical-align: middle; text-align:center">
                                 <div class="container">
                                 @if ($donation_type->deleted_at == null)
                                 <form action="{{ URL('donationtype/delete/' . $donation_type->id) }}" method="POST">

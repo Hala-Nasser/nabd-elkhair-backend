@@ -33,3 +33,6 @@ Route::post('donationtype/delete/{id}', [App\Http\Controllers\ControlPanel\Donat
 Route::post('donationtype/restore/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'restore']);
 
 Route::get('/complaint', [App\Http\Controllers\ControlPanel\Complaint\ComplaintController::class, 'index'])->name('complaint');
+
+Route::get('charity/donation/{id}', [App\Http\Controllers\ControlPanel\Donation\DonationController::class, 'index']);
+
