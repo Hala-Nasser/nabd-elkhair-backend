@@ -47,16 +47,16 @@
         <table class="table table-striped projects">
           <thead>
             <tr>
-              <th style="width: 1%">
+              <th style="width: 1%; text-align:center">
                 #
               </th>
-              <th style="width: 20%">
+              <th style="width: 20%; text-align:center">
                 الاسم
               </th>
-              <th style="width: 20%">
+              <th style="width: 20%; text-align:center">
                 البريد الالكتروني
               </th>
-              <th style="width: 20%">
+              <th style="width: 20%; text-align:center">
                 الاجراءات
               </th>
             </tr>
@@ -65,19 +65,16 @@
 
             @foreach($donors as $donor)
             <tr>
-              <td>
-                <h6>{{ $donor->id }}</h6>
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $donor->id }}</h6>
               </td>
-              <td>
-
-                <h6>{{ $donor->name }}</h6>
-
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $donor->name }}</h6>
               </td>
-              <td>
-                <h6>{{ $donor->email }}</h6>
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $donor->email }}</h6>
               </td>
-
-              <td>
+              <td style="vertical-align: middle; text-align:center">
                 @if ($donor->activation_status == 1)
                 <form action="{{ URL('donor/disable/' . $donor->id) }}" method="POST" style="display: inline;">
                     @csrf

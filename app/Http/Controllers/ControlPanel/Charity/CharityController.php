@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ControlPanel\Charity;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Charity;
+use App\Models\PaymentLink;
 
 class CharityController extends Controller
 {
@@ -20,6 +21,7 @@ class CharityController extends Controller
 
     public function details(Request $request, $id){
         $charity = Charity::find($id);
+        $charity->payment_links = PaymentLink::select('*')->where('charity_id', $id)->first();
         return view('ControlPanel.charity.details')->with('charity', $charity);
     }
 
