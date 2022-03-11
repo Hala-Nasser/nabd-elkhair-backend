@@ -47,22 +47,22 @@
         <table class="table table-striped projects">
           <thead>
             <tr>
-              <th style="width: 1%">
+              <th style="width: 1%; text-align:center">
                 #
               </th>
-              <th style="width: 20%">
+              <th style="width: 20%; text-align:center">
                 المشتكي
               </th>
-              <th style="width: 20%">
+              <th style="width: 20%; text-align:center">
                 المشتكى عليه
               </th>
-              <th style="width: 20%">
+              <th style="width: 20%; text-align:center">
                 نوع المشتكي
               </th>
-              <th style="width: 20%">
+              <th style="width: 20%; text-align:center">
                 سبب الشكوى
               </th>
-              <th style="width: 20%">
+              <th style="width: 20%; text-align:center">
                 الاجراءات
               </th>
             </tr>
@@ -71,22 +71,22 @@
 
             @foreach($complaints as $complaint)
             <tr>
-              <td style="vertical-align: middle;">
-                <h6>{{ $complaint->id }}</h6>
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $complaint->id }}</h6>
               </td>
-              <td style="vertical-align: middle;">
-                <h6>{{ $complaint->complainer_name }}</h6>
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $complaint->complainer_name }}</h6>
               </td>
-              <td style="vertical-align: middle;">
-                <h6>{{ $complaint->defendant_name }}</h6>
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $complaint->defendant_name }}</h6>
               </td>
-              <td style="vertical-align: middle;">
-                <h6>{{ $complaint->complainer_type }}</h6>
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $complaint->complainer_type }}</h6>
               </td>
-              <td style="vertical-align: middle;">
-                <h6>{{ $complaint->complaint_reason }}</h6>
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $complaint->complaint_reason }}</h6>
               </td>
-              <td style="vertical-align: middle;">
+              <td style="vertical-align: middle; text-align:center">
                 @if ($complaint->complainer_type == "charity")
                     <form action="{{ URL('donor/disable/' . $complaint->defendant_id) }}" method="POST">
                         @csrf
