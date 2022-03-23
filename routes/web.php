@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/home', [App\Http\Controllers\ControlPanel\HomeController::class, 'index'])->name('home');
+
 Auth::routes();
 Route::get('/charity', [App\Http\Controllers\ControlPanel\Charity\CharityController::class, 'index'])->name('charity');
 Route::get('charity/{id}', [App\Http\Controllers\ControlPanel\Charity\CharityController::class, 'details']);
