@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Charity; 
 use App\Models\Complaint;
 use App\Models\Campaign;
+use App\Models\Donor;
+use App\Models\PaymentLink;
+use App\Models\DonationType;
+use App\Models\Donation;
 use Validator;
 use Auth;
 use Illuminate\Support\Str;
@@ -169,7 +173,6 @@ class CharityUserController extends Controller
     { 
             $validator = Validator::make($request->all(), [ 
             'defendant_id' => 'required', 
-            'complainer_type' => 'required',
             'complaint_reason' => 'required',
         ]);
 
@@ -177,17 +180,23 @@ class CharityUserController extends Controller
             return response()->json(['error'=>$validator->errors()], 401);            
         }
 
+        $user = Donor::where('id',$request['defendant_id'])->first();
     
-        $data = $request->all();
-        $data['complainer_id'] = auth()->guard('charity-api')->user()->id;
-        $response = Complaint::create($data);
+        if($user){
+    
+            $data = $request->all();
+            $data['complainer_id'] = auth()->guard('charity-api')->user()->id;
+            $data['complainer_type'] = 'Charity';
+            $response = Complaint::create($data);
 
-        if($response){
-              return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
+            if($response){
+                return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
+            }else{
+                return response()->json(['status'=>'fail'], 500); 
+            }
         }else{
-            return response()->json(['status'=>'fail'], 500); 
+            return response()->json(['message' => 'defendant User Not Found'],400);
         }
-        
     }
 
     public function addCampaign(Request $request) 
@@ -279,4 +288,84 @@ class CharityUserController extends Controller
         return response()->json(['message' => 'Password successfully updated'],200);
 
     }
+
+    public function addPaymentLinks(Request $request) 
+        { 
+            $data = $request->all();
+            $data['charity_id'] = auth()->guard('charity-api')->user()->id;
+            $response = PaymentLink::create($data);
+
+            if($response){
+                return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
+            }else{
+                return response()->json(['status'=>'fail'], 500); 
+            }
+            
+        }
+
+   
+        public function getComplaints(){
+            $status = Complaint::where('complainer_type','Charity')->get(); 
+            return response()->json($status, $this->successStatus);
+    }
+
+    public function getDonationTypes(){
+        $status = DonationType::all();    
+        return response()->json($status, $this->successStatus);
+    }
+
+    public function getPaymentLinks(){
+        $status = PaymentLink::all();    
+        return response()->json($status, $this->successStatus);
+    }
+
+    public function getCampaigns(){
+        $status = Campaign::all();    
+        return response()->json($status, $this->successStatus);
+    }
+
+    public function getCharity(){
+        $status = Charity::where('id',auth()->guard('charity-api')->user()->id)->get();    
+        return response()->json($status, $this->successStatus);
+    }
+
+    public function getDonations(){
+        $user = Donation::with('donor')->with('campaign')
+        ->get(); 
+        // $diffInDays = $user->created_at->diffInDays();
+        //  $showDiff =  $user->created_at->addDays($diffInDays)->diffInHours().' Hours';
+        // echo $showDiff;
+        return response()->json($user, $this->successStatus);
+    }
+    
+    public function setDonationAcceptance (Request $request){
+        $validator = Validator::make($request->all(), [ 
+            'donation_id' => 'required',
+            'acceptance' => 'required',
+        ]);
+
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);            
+        }
+        $donation = Donation::find($request->donation_id);
+        $donation->acceptance = $request->acceptance;
+        $success = $donation->update();
+        return response()->json(['success'=>$success,'message'=>'Donation Acceptance Updated Successfully'], $this-> successStatus); 
+    }
+
+    public function setDonationReceived (Request $request){
+        $validator = Validator::make($request->all(), [ 
+            'donation_id' => 'required',
+            'received' => 'required',
+        ]);
+
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);            
+        }
+        $donation = Donation::find($request->donation_id);
+        $donation->received = $request->received;
+        $success = $donation->update();
+        return response()->json(['success'=>$success,'message'=>'Donation Received Updated Successfully'], $this-> successStatus); 
+    }
+
 }

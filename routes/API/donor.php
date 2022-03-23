@@ -20,5 +20,6 @@ Route::post('donor/login', [DonorController::class, 'login']);
 Route::group( ['prefix' => 'donor','middleware' => ['auth:donor-api','scopes:donor'] ],function(){
     // authenticated staff routes here 
         Route::post('addcomplaint', [DonorController::class,'addComplaint']);
+        Route::post('addDonation', [DonorController::class,'addDonation']);
        
  });
