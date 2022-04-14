@@ -76,8 +76,9 @@ class DonorController extends Controller
                 $donor->activation_status = $request['activation_status'];
 
                 $success = $donor->save();
+                $donor_info = Donor::find($donor->id);
 
-                return response()->json(['success'=>$success], $this-> successStatus); 
+                return response()->json(['success'=>$success, 'data'=> $donor_info], $this-> successStatus); 
             }
 
 
@@ -125,12 +126,20 @@ if ($validator->fails()) {
     }
 
 
-    public function storeFCMToken($id, $fcm)
+    public function storeFCMToken(Request $request)
     {
-        $donor = Donor::find($donor->id);
-        $donor->fcm_token = $token;
+        $validator = Validator::make($request->all(), [
+            'donor_id' => 'required',
+            'fcm_token' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['error' => $validator->errors()->all()]);
+        }
+        $donor = Donor::find($request['donor_id']);
+        $donor->fcm_token = $request['fcm_token'];
         $success = $donor->save();
-        return response()->json(['success'=>$success], $this-> successStatus);
+        return response()->json(['success'=>$success, 'data'=> $donor], $this-> successStatus);
     }
 
     //forgot password
