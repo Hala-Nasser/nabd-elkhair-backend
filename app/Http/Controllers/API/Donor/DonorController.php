@@ -26,10 +26,10 @@ class DonorController extends Controller
         
         if(auth()->guard('donor')->attempt(['email' => request('email'), 'password' => request('password')])){
             $user = Donor::select('donors.*')->find(auth()->guard('donor')->user()->id);
-            $success =  $user;
-            $success['token'] =  $user->createToken('MyApp',['donor'])->accessToken; 
-
-            return response()->json($success, 200);
+            $user['token'] =  $user->createToken('MyApp',['donor'])->accessToken; 
+            $success = true;
+            return response()->json(['success'=>$success, 'data'=> $user], $this-> successStatus);
+            
         }else{ 
             return response()->json(['error' => ['Email or Password are Wrong.']], 200);
         }
