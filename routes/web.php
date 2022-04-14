@@ -38,3 +38,13 @@ Route::get('/complaint', [App\Http\Controllers\ControlPanel\Complaint\ComplaintC
 
 Route::get('charity/donation/{id}', [App\Http\Controllers\ControlPanel\Donation\DonationController::class, 'index']);
 
+Route::get('about', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'aboutIndex']);
+Route::post('about/store', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'aboutStore']);
+Route::get('privacy', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'privacyIndex']);
+Route::post('privacy/store', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'privacyStore']);
+Route::get('onboarding1', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding1Index']);
+Route::post('onboarding1/store', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding1Store']);
+Route::get('onboarding2', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding2Index']);
+Route::post('onboarding2/store', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding2Store']);
+Route::get('onboarding3', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding3Index']);
+Route::post('onboarding3/store', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding3Store']);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Charity;
 use App\Models\PaymentLink;
+use App\Models\Donor;
 
 class CharityController extends Controller
 {
@@ -24,6 +25,7 @@ class CharityController extends Controller
         $charity->payment_links = PaymentLink::select('*')->where('charity_id', $id)->first();
         return view('ControlPanel.charity.details')->with('charity', $charity);
     }
+    
 
     public function enable (Request $request, $id) {
     
@@ -31,12 +33,21 @@ class CharityController extends Controller
         $charity->activation_status = 1;
         $result = $charity->save();
 
+        
+        if($charity->first_activiation == null){
+            $charity->first_activiation = 1;
+
+            //send notification
+            $this->sendNotification('تم اضافة جمعية جديدة','{{$charity->name}} تم إضافة جمعية ');
+        }
+
         if ($result) {
             return redirect('charity');
         }else{
             return redirect()->back();
         }
     }
+
 
     public function disable (Request $request, $id) {
     
@@ -57,6 +68,43 @@ class CharityController extends Controller
             $charity = Charity::find($id);
             $result = $charity->delete();
             return redirect('charity');
+        }
+
+
+
+        //public function sendNotification($token , $title , $body){
+        public function sendNotification($title , $body){
+            $SERVER_API_KEY = 'AAAAicpoaxc:APA91bHeJOgxSWWShrTXKNbJktNGj3l4zKuM7b5rkO40Tsf7n0MGOKHXX-2kXTzvAm2CSUjfloo98v9zH1Y8g5aRlfjRNDDrC1oet79cbn1o3Nwbc8LcGETk29vzCNoRfC6RZo_f7Kic';
+            //$token_1 = 'Test Token';
+
+            $tokens = Donor::select('fcm_token')->where('fcm_token', '<>', null)->get();
+
+            foreach ($tokens as $t){
+                // dd(78323);
+                $data = [
+                    "registration_ids" => [
+                        $t
+                    ],
+                    "notification" => [
+                        "title" => $title,
+                        "body" => $body,
+                    ],
+                ];
+                $dataString = json_encode($data);
+                $headers = [
+                    'Authorization: key=' . $SERVER_API_KEY,
+                    'Content-Type: application/json',
+                ];
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+                $response = curl_exec($ch);
+            }
+    
         }
 
 }

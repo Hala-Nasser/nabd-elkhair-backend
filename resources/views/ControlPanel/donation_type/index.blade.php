@@ -54,7 +54,10 @@
                                 #
                             </th>
                             <th style="width: 20%; text-align:center">
-                                الصورة
+                                اسم نوع التبرع
+                            </th>
+                            <th style="width: 20%; text-align:center">
+                                الأيقونة
                             </th>
                             <th style="width: 20%; text-align:center">
                                 الاجراءات
@@ -67,6 +70,9 @@
                         <tr>
                             <td style="vertical-align: middle; text-align:center">
                                 <h6>{{ $donation_type->id }}</h6>
+                            </td>
+                            <td style="vertical-align: middle; text-align:center">
+                                <h6>{{ $donation_type->name }}</h6>
                             </td>
                             <td style="vertical-align: middle; text-align:center">
                                 <img alt="Avatar" src="{{asset('storage/uploads/images/'.$donation_type->image)}}"  style="width:60px; height:40px; border-radius: 8px; object-fit: contain;">

@@ -34,7 +34,7 @@
     <!-- Default box -->
     <div class="card" style="margin-right: 10px; margin-left: 10px">
       <div class="card-header">
-        
+
 
         <div class="card-tools">
           <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -53,10 +53,13 @@
               <th style="width: 20%; text-align:center">
                 الاسم
               </th>
-              <th style="width: 30%; text-align:center">
+              <th style="width: 25%; text-align:center">
                 البريد الالكتروني
               </th>
-              <th style="width: 30%; text-align:center">
+              <th style="width: 20%; text-align:center">
+                رقم الهاتف
+              </th>
+              <th style="width: 45%; text-align:center">
                 الاجراءات
               </th>
             </tr>
@@ -73,6 +76,9 @@
               </td>
               <td style="vertical-align: middle; text-align:center">
                 <h6 style="font-size:14px;">{{ $charity->email }}</h6>
+              </td>
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $charity->phone }}</h6>
               </td>
               <td style="vertical-align: middle; text-align:center">
                 <a class="btn btn-info btn-sm" href="{{ URL('charity/' . $charity->id) }}">
