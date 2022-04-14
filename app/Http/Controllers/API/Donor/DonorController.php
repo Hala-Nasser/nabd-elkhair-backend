@@ -83,47 +83,7 @@ class DonorController extends Controller
 
 
 
-         public function addDonation(Request $request){
 
-            $validator = Validator::make($request->all(), [ 
-            'name' => 'required', 
-            'email' => 'required|email', 
-            'password' => [
-                'required',
-                'string',
-                'min:8',             // must be at least 8 characters in length
-                'regex:/[a-z]/',      // must contain at least one lowercase letter
-                'regex:/[A-Z]/',      // must contain at least one uppercase letter
-                'regex:/[0-9]/',      // must contain at least one digit
-                'regex:/[@$!%*#?&]/', // must contain a special character
-            ], 
-            'c_password' => 'required|same:password', 
-            'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10',
-            'location' => 'required',
-            'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg',
-            'activation_status' => 'required'
-        ]);
-
-if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
-        }
-
-    
-        $donor = new Donor();
-        $donor->name = $request['name'];
-        $donor->email = $request['email'];
-        $donor->password = bcrypt($request['password']);
-        $donor->phone = $request['phone'];
-        $donor->location = $request['location'];
-        $donor->image = $request['image'];
-        $donor->activation_status = $request['activation_status'];
-
-        $success = $donor->save();
-
-        $donor_info = Donor::find($donor->id);
-
-        return response()->json(['success'=>$success, 'data'=> $donor_info], $this-> successStatus); 
-    }
 
 
     public function storeFCMToken(Request $request)
@@ -239,9 +199,35 @@ if ($validator->fails()) {
        
     }
 
-    //add complaint
+   
+           //add complaint
     public function addComplaint(Request $request) 
     { 
+            $validator = Validator::make($request->all(), [ 
+            'defendant_id' => 'required', 
+            'complainer_type' => 'required',
+            'complaint_reason' => 'required',
+        ]);
+
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);            
+        }
+
+    
+        $data = $request->all();
+        $data['complainer_id'] = auth()->guard('donor-api')->user()->id;
+        $response = Complaint::create($data);
+
+        if($response){
+              return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
+        }else{
+            return response()->json(['status'=>'fail'], 500); 
+        }
+        
+    }
+           
+
+         public function addDonation(Request $request){
             $validator = Validator::make($request->all(), [ 
                 'charity_id' => 'required', 
                 'donation_type_id' => 'required',

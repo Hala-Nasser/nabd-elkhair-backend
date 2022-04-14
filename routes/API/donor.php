@@ -27,5 +27,10 @@ Route::group( ['prefix' => 'donor','middleware' => ['auth:donor-api','scopes:don
     Route::post('changePassword', [DonorController::class,'setNewAccountPassword']);
     Route::get('logout',[DonorController::class, 'logout']);
     Route::post('addcomplaint', [DonorController::class,'addComplaint']);
+    Route::post('addcomplaint', [DonorController::class,'addComplaint']);
+    Route::post('addDonation', [DonorController::class,'addDonation']);
+    Route::post('changePassword', [DonorController::class,'setNewAccountPassword']);
+    Route::get('logout',[DonorController::class, 'logout']);
+
        
  });
