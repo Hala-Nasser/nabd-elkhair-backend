@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateDonationsTable extends Migration
+class ChangePaymentLinkDonation extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,7 @@ class UpdateDonationsTable extends Migration
     public function up()
     {
         Schema::table('donations', function($table) {
-            $table->renameColumn('payment_link_id', 'payment_link');
-            $table->boolean('acceptance')->default(0);
+        $table->string('payment_link')->change();
         });
     }
 
@@ -28,7 +27,6 @@ class UpdateDonationsTable extends Migration
     {
         Schema::table('donations', function($table) {
             $table->dropColumn('payment_link');
-            $table->dropColumn('acceptance');
         });
     }
 }

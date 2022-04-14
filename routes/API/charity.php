@@ -23,10 +23,22 @@ Route::group( ['prefix' => 'charity','middleware' => ['auth:charity-api','scopes
     // authenticated staff routes here 
         Route::post('changePassword', [CharityUserController::class,'setNewAccountPassword']);
         Route::post('addcomplaint', [CharityUserController::class,'addComplaint']);
+        Route::post('addPaymentLinks', [CharityUserController::class,'addPaymentLinks']);
         Route::post('addCampaign',[CharityUserController::class, 'addCampaign']);
+        Route::post('setDonationAcceptance', [CharityUserController::class,'setDonationAcceptance']);
+        Route::post('setDonationReceived', [CharityUserController::class,'setDonationReceived']);
         Route::post('updateProfile',[CharityUserController::class, 'updateProfile']);
         Route::post('updateCampaign',[CharityUserController::class, 'updateCampaign']);
-        Route::delete('campaigns/{id}',[CharityUserController::class, 'deleteCampaign']);
+
+        Route::get('getDonationTypes', [CharityUserController::class,'getDonationTypes']);
+        Route::get('getPaymentLinks', [CharityUserController::class,'getPaymentLinks']);
+        Route::get('getCharity', [CharityUserController::class,'getCharity']);
+        Route::get('getComplaints', [CharityUserController::class,'getComplaints']);
+        Route::get('getCampaigns', [CharityUserController::class,'getCampaigns']);
+        Route::get('getDonations', [CharityUserController::class,'getDonations']);
         Route::get('logout',[CharityUserController::class, 'logout']);
+
+        Route::delete('campaigns/{id}',[CharityUserController::class, 'deleteCampaign']);
+        
        
  });
