@@ -43,7 +43,6 @@ class DonorController extends Controller
     public function register(Request $request) 
     { 
         $validator = Validator::make($request->all(), [ 
-<<<<<<< HEAD
                 'name' => 'required', 
                 'email' => 'required|email', 
                 'password' => [
@@ -117,7 +116,7 @@ class DonorController extends Controller
 
          public function addDonation(Request $request){
 
-=======
+
             'name' => 'required', 
             'email' => 'required|email', 
             'password' => [
@@ -266,7 +265,6 @@ if ($validator->fails()) {
     //add complaint
     public function addComplaint(Request $request) 
     { 
->>>>>>> origin/hala-branch
             $validator = Validator::make($request->all(), [ 
                 'charity_id' => 'required', 
                 'donation_type_id' => 'required',
