@@ -188,40 +188,33 @@ if ($validator->fails()) {
        
     }
 
-    //add complaint     
+   
+           //add complaint
+    public function addComplaint(Request $request) 
+    { 
+            $validator = Validator::make($request->all(), [ 
+            'defendant_id' => 'required', 
+            'complainer_type' => 'required',
+            'complaint_reason' => 'required',
+        ]);
 
-            public function addComplaint(Request $request) 
-            { 
-                $validator = Validator::make($request->all(), [ 
-                    'defendant_id' => 'required', 
-                    'complaint_reason' => 'required',
-                ]);
+        if ($validator->fails()) { 
+            return response()->json(['error'=>$validator->errors()], 401);            
+        }
 
-                if ($validator->fails()) { 
-                    return response()->json(['error'=>$validator->errors()], 401);            
-                }
+    
+        $data = $request->all();
+        $data['complainer_id'] = auth()->guard('donor-api')->user()->id;
+        $response = Complaint::create($data);
 
-                $user = Charity::where('id',$request['defendant_id'])->first();
-            
-                if($user){
-
-                    $data = $request->all();
-                    $data['complainer_id'] = auth()->guard('donor-api')->user()->id;
-                    $data['complainer_type'] = 'Donor';
-                    $response = Complaint::create($data);
-
-                    if($response){
-                        return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
-                    }else{
-                        return response()->json(['status'=>'fail'], 500); 
-                    }
-                    
-                }else{
-                    return response()->json(['message' => 'defendant User Not Found'],400);
-                }
-            
-            }
-
+        if($response){
+              return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
+        }else{
+            return response()->json(['status'=>'fail'], 500); 
+        }
+        
+    }
+           
 
          public function addDonation(Request $request){
             $validator = Validator::make($request->all(), [ 
