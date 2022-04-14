@@ -22,7 +22,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>الجمعيات</h1>
+          <h1>الرئيسية</h1>
         </div>
       </div>
     </div><!-- /.container-fluid -->
@@ -34,6 +34,82 @@
     <!-- Default box -->
     <div class="card" style="margin-right: 10px; margin-left: 10px">
       <div class="card-header">
+        <h3 class="card-title">إحصائيات</h3>
+      </div>
+      <div class="card-body p-0">
+        <div class="row" style="margin: 20px">
+          <div class="card" style="background-color: rgba(0,0,0,.03)">
+            <div class="card-body">
+              <div class="d-flex text-muted">
+                <div class="inner" style="margin-top:15px">
+                  <h3 style="color:#000">{{$donors_count}}</h3>
+
+                  <p style="color:#000">عدد المتبرعين</p>
+                </div>
+
+              </div>
+            </div>
+            <!-- end card-body -->
+          </div>
+          <!-- end card -->
+
+          <div class="card" style="background-color: rgba(0,0,0,.03); margin-right:20px">
+            <div class="card-body">
+              <div class="d-flex text-muted">
+                <div class="inner" style="margin-top:15px">
+                  <h3 style="color:#000">{{$charities_count}}</h3>
+
+                  <p style="color:#000">عدد الجمعيات</p>
+                </div>
+
+              </div>
+            </div>
+            <!-- end card-body -->
+          </div>
+          <!-- end card -->
+
+          <div class="card" style="background-color: rgba(0,0,0,.03); margin-right:20px">
+            <div class="card-body">
+              <div class="d-flex text-muted">
+                <div class="inner" style="margin-top:15px">
+                  <h3 style="color:#000">{{$donation_types_count}}</h3>
+
+                  <p style="color:#000">أنواع التبرعات المتاحة</p>
+                </div>
+
+              </div>
+            </div>
+            <!-- end card-body -->
+          </div>
+          <!-- end card -->
+
+          <div class="card" style="background-color: rgba(0,0,0,.03); margin-right:20px">
+            <div class="card-body">
+              <div class="d-flex text-muted">
+                <div class="inner" style="margin-top:15px">
+                  <h3 style="color:#000">{{$complaints_count}}</h3>
+
+                  <p style="color:#000">عدد الشكاوي</p>
+                </div>
+
+              </div>
+            </div>
+            <!-- end card-body -->
+          </div>
+          <!-- end card -->
+        </div>
+      </div>
+
+
+
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+
+
+    <!-- Default box -->
+    <div class="card" style="margin-right: 10px; margin-left: 10px">
+      <div class="card-header">
 
 
         <div class="card-tools">
@@ -41,7 +117,7 @@
             <i class="fas fa-minus"></i>
           </button>
         </div>
-        <h3 class="card-title">الجمعيات</h3>
+        <h3 class="card-title">الجمعيات الغير مفعلة</h3>
       </div>
       <div class="card-body p-0">
         <table class="table table-striped projects">
@@ -64,8 +140,16 @@
               </th>
             </tr>
           </thead>
-          <tbody>
 
+
+          @if($charities->isEmpty())
+          <tbody>
+            <tr>
+              <td valign="top" colspan="8" style="text-align: center">لا يوجد جمعيات غير مفعلة</td>
+            </tr>
+          </tbody>
+          @else
+          <tbody>
             @foreach($charities as $charity)
             <tr>
               <td style="vertical-align: middle; text-align:center">
@@ -102,6 +186,9 @@
               </td>
             </tr>
             @endforeach
+          </tbody>
+
+          @endif
 
           </tbody>
         </table>

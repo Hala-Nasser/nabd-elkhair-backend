@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddDonationTypeRequest extends FormRequest
+class StaticPagesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class AddDonationTypeRequest extends FormRequest
     public function rules()
     {
         return [
+            'content'=> 'required|string',
             'name' => 'required|string',
-            'image'=> 'required|image',
         ];
         
     }
@@ -33,10 +33,10 @@ class AddDonationTypeRequest extends FormRequest
     public function messages(){
 
         return [
-            'name.required'=> 'الاسم مطلوب',
-            'name.string'=> 'يجب ان يكون الاسم نص',
-            'image.required'=> 'الصورة مطلوبة',
-            'image.image'=> 'الرجاء اختيار صورة',
+            'content.required'=> 'المحتوى مطلوب',
+            'content.string'=> 'يجب ان يكون المحتوى نص',
+            'name.required'=> 'العنوان مطلوب',
+            'name.string'=> 'يجب ان يكون العنوان نص',
             ];
 
     }

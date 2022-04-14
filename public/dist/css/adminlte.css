@@ -11581,8 +11581,7 @@ body,
 }
 
 [class*='sidebar-dark-'] .nav-treeview > .nav-item > .nav-link.active, [class*='sidebar-dark-'] .nav-treeview > .nav-item > .nav-link.active:hover, [class*='sidebar-dark-'] .nav-treeview > .nav-item > .nav-link.active:focus {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #343a40;
+  color: #C2C7D0;
 }
 
 .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active,
