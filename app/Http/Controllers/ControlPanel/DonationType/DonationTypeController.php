@@ -36,6 +36,7 @@ class DonationTypeController extends Controller
         if ($status) {    
             $donation_type = new DonationType();
             $donation_type->image = $image_name;
+            $donation_type->name = $request['name'];
     
             $result = $donation_type->save();
     

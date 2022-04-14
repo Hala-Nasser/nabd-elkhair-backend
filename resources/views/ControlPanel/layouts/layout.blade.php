@@ -176,6 +176,47 @@
                 </p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link" id="static_pages">
+                <img src="{{ asset('static.png') }}" style="width: 20px; height:20px;">
+                <p style="color: #fff; margin-right:5px;">
+                  إدارة الصفحات الثابتة
+                  
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{{ URL('about') }}" class="nav-link" id="aboutapp">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p style="color: #fff; margin-right:5px; font-size:14px;">عن التطبيق</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ URL('privacy') }}" class="nav-link" id="privacypolicy">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p style="color: #fff; margin-right:5px; font-size:14px;">سياسة الاستخدام</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ URL('first/onboarding') }}" class="nav-link" id="onboarding1">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p style="color: #fff; margin-right:5px; font-size:14px;">شاشة الترحيب الاولى</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ URL('second/onboarding') }}" class="nav-link" id="onboarding2">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p style="color: #fff; margin-right:5px; font-size:14px;">شاشة الترحيب الثانية</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ URL('third/onboarding') }}" class="nav-link" id="onboarding3">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p style="color: #fff; margin-right:5px; font-size:14px;">شاشة الترحيب الثالثة</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
           </ul>
         </nav>
         <!-- /.sidebar-menu -->
@@ -216,10 +257,26 @@
       $('#donor').addClass('active');
     @elseif (\Request::url() == URL('Complaint'))
       $('#Complaint').addClass('active');
+      @elseif (\Request::url() == URL('about'))
+      $('#aboutapp').addClass('active');
+      $('#static_pages').addClass('active');
+    @elseif (\Request::url() == URL('privacy'))
+      $('#privacypolicy').addClass('active');
+      $('#static_pages').addClass('active');
+    @elseif (\Request::url() == URL('first/onboarding'))
+      $('#onboarding1').addClass('active');
+      $('#static_pages').addClass('active');
+    @elseif (\Request::url() == URL('second/onboarding'))
+      $('#onboarding2').addClass('active');
+      $('#static_pages').addClass('active');
+      @elseif (\Request::url() == URL('third/onboarding'))
+      $('#onboarding3').addClass('active');
+      $('#static_pages').addClass('active');
     @endif
   });
   </script>
 
+@yield('js')
 
 </body>
 
