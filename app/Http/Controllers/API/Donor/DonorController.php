@@ -83,10 +83,10 @@ if ($validator->fails()) {
     }
 
 
-    public function storeFCMToken($id, $fcm)
+    public function storeFCMToken(Request $request)
     {
-        $donor = Donor::find($donor->id);
-        $donor->fcm_token = $token;
+        $donor = Donor::find($request['user_id']);
+        $donor->fcm_token = $request['fcm'];
         $success = $donor->save();
         return response()->json(['success'=>$success], $this-> successStatus);
     }
