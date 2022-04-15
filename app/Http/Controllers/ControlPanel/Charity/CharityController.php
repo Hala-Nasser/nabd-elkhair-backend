@@ -33,12 +33,16 @@ class CharityController extends Controller
         $charity->activation_status = 1;
         $result = $charity->save();
 
+        //if(is_null($charity->first_activiation))
         
-        if($charity->first_activiation == null){
+        if(is_null($charity->first_activiation)){
             $charity->first_activiation = 1;
+            $charity->save();
 
+            $notification_content = ' تم إضافة جمعية ' . $charity->name;
             //send notification
-            $this->sendNotification('تم اضافة جمعية جديدة','{{$charity->name}} تم إضافة جمعية ');
+            $this->sendNotification('تم اضافة جمعية جديدة',$notification_content);
+            //dd("enter");
         }
 
         if ($result) {
@@ -74,16 +78,18 @@ class CharityController extends Controller
 
         //public function sendNotification($token , $title , $body){
         public function sendNotification($title , $body){
+           
             $SERVER_API_KEY = 'AAAAicpoaxc:APA91bHeJOgxSWWShrTXKNbJktNGj3l4zKuM7b5rkO40Tsf7n0MGOKHXX-2kXTzvAm2CSUjfloo98v9zH1Y8g5aRlfjRNDDrC1oet79cbn1o3Nwbc8LcGETk29vzCNoRfC6RZo_f7Kic';
-            //$token_1 = 'Test Token';
 
-            $tokens = Donor::select('fcm_token')->where('fcm_token', '<>', null)->get();
+            $donors = Donor::select('*')->whereNotNull('fcm_token')->get();
+            //dd($donors);
 
-            foreach ($tokens as $t){
-                // dd(78323);
+            foreach($donors as $d){
+                $token = $d->fcm_token;
+                //dd($token);
                 $data = [
                     "registration_ids" => [
-                        $t
+                        $token
                     ],
                     "notification" => [
                         "title" => $title,
@@ -104,6 +110,9 @@ class CharityController extends Controller
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
                 $response = curl_exec($ch);
             }
+           /* foreach ($tokens as $t){
+                
+            }*/
     
         }
 
