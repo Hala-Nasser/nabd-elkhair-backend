@@ -43,8 +43,9 @@
           <h3 class="card-title"  style="color: black;">عن التطبيق</h3>
         </div>
         <!-- form start -->
-        <form method="post" action="{{ URL('about/store') }}" enctype="multipart/form-data">
+        <form method="post" action="{{ URL('static/store/'. $staticPage->id) }}" enctype="multipart/form-data">
           @csrf
+          {{-- {{dd(route('rr'))}} --}}
           <div class="card-body">
 
             @if( !(empty($errors->get('name'))) )
@@ -61,9 +62,11 @@
             @endif
 
             <div class="form-group">
-              <label for="exampleInputFile">عنوان الصفحة</label>
+              <label for="exampleInputFile">اسم الصفحة</label>
               <div>
-                  <input name="name" style="width:90%; height:50px; margin-left:auto; margin-right:auto; display:block; pointer-events: none; padding-right: 10px;" type="text" value="عن التطبيق">
+                <input type="text" class="form-control"
+                  style="width:100%; height:40px; margin-left:15px; margin-right:5px; display:block; padding-right: 10px; padding-left: 10px; pointer-events: none;"
+                  value="{{$staticPage->name}}">
               </div>
             </div>
 
@@ -84,7 +87,7 @@
             <div class="form-group">
               <label for="exampleInputFile">محتوى الصفحة</label>
               <div>
-                  <textarea name="content" style="width:90%; height:200px; margin-left:auto; margin-right:auto; display:block; padding-right: 10px; padding-left: 10px;">{{$about->content}}</textarea>
+                  <textarea class="form-control" name="content" style="width:100%; height:200px; display:block; padding-right: 10px; padding-left: 10px; margin-left:15px; margin-right:5px;">{{$staticPage->content}}</textarea>
               </div>
             </div>
           <!-- /.card-body -->
