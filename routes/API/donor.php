@@ -16,7 +16,7 @@ use App\Http\Controllers\API\Donor\DonorController;
 */
 Route::post('donor/register', [DonorController::class, 'register']);
 Route::post('donor/login', [DonorController::class, 'login']);
-Route::post('donor/storeFCMToken', [DonorController::class, 'storeFCMToken']);
+Route::post('donor/store/fcm', [DonorController::class, 'storeFCMToken']);
 Route::post('charity/forgotPassword',[DonorController::class, 'forgotPassword']);
 Route::post('charity/resetPassword',[DonorController::class, 'resetPassword']);
 

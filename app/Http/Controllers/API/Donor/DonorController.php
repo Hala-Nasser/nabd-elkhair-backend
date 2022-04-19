@@ -28,10 +28,10 @@ class DonorController extends Controller
         
         if(auth()->guard('donor')->attempt(['email' => request('email'), 'password' => request('password')])){
             $user = Donor::select('donors.*')->find(auth()->guard('donor')->user()->id);
-            $success =  $user;
-            $success['token'] =  $user->createToken('MyApp',['donor'])->accessToken; 
-
-            return response()->json($success, 200);
+            $user['token'] =  $user->createToken('MyApp',['donor'])->accessToken; 
+            $success = true;
+            return response()->json(['success'=>$success, 'data'=> $user], $this-> successStatus);
+            
         }else{ 
             return response()->json(['error' => ['Email or Password are Wrong.']], 200);
         }
@@ -84,20 +84,10 @@ class DonorController extends Controller
 
 
 
-
-
     public function storeFCMToken(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'donor_id' => 'required',
-            'fcm_token' => 'required',
-        ]);
-
-        if($validator->fails()){
-            return response()->json(['error' => $validator->errors()->all()]);
-        }
-        $donor = Donor::find($request['donor_id']);
-        $donor->fcm_token = $request['fcm_token'];
+        $donor = Donor::find($request['user_id']);
+        $donor->fcm_token = $request['fcm'];
         $success = $donor->save();
         return response()->json(['success'=>$success, 'data'=> $donor], $this-> successStatus);
     }
@@ -225,6 +215,9 @@ class DonorController extends Controller
         }
         
     }
+
+
+    
            
 
          public function addDonation(Request $request){

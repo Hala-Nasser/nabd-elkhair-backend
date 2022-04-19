@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,10 +28,11 @@ Route::post('donor/enable/{id}', [App\Http\Controllers\ControlPanel\Donor\DonorC
 Route::post('donor/disable/{id}', [App\Http\Controllers\ControlPanel\Donor\DonorController::class, 'disable']);
 Route::post('donor/delete/{id}', [App\Http\Controllers\ControlPanel\Donor\DonorController::class, 'destroy']);
 
-
 Route::get('/donationtype', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'index'])->name('donationtype');
 Route::get('donationtype/create', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'create']);
 Route::post('donationtype/store', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'store']);
+Route::get('donationtype/edit/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'edit']);
+// Route::post('donationtype/update/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'update']);
 Route::post('donationtype/delete/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'destroy']);
 Route::post('donationtype/restore/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'restore']);
 
@@ -38,13 +40,6 @@ Route::get('/complaint', [App\Http\Controllers\ControlPanel\Complaint\ComplaintC
 
 Route::get('charity/donation/{id}', [App\Http\Controllers\ControlPanel\Donation\DonationController::class, 'index']);
 
-Route::get('about', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'aboutIndex']);
-Route::post('about/store', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'aboutStore']);
-Route::get('privacy', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'privacyIndex']);
-Route::post('privacy/store', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'privacyStore']);
-Route::get('onboarding1', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding1Index']);
-Route::post('onboarding1/store', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding1Store']);
-Route::get('onboarding2', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding2Index']);
-Route::post('onboarding2/store', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding2Store']);
-Route::get('onboarding3', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding3Index']);
-Route::post('onboarding3/store', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboarding3Store']);
+Route::get('static/{id}', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'index']);
+Route::post('static/store/{id}', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'staticStore']);
+// Route::post('onboarding/store/{id}', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'onboardingStore']);

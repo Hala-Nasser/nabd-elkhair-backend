@@ -25,7 +25,8 @@ class StaticPagesRequest extends FormRequest
     {
         return [
             'content'=> 'required|string',
-            'name' => 'required|string',
+            'title' => 'required|string',
+            'image' => 'required|image',
         ];
         
     }
@@ -35,8 +36,10 @@ class StaticPagesRequest extends FormRequest
         return [
             'content.required'=> 'المحتوى مطلوب',
             'content.string'=> 'يجب ان يكون المحتوى نص',
-            'name.required'=> 'العنوان مطلوب',
-            'name.string'=> 'يجب ان يكون العنوان نص',
+            'title.required'=> 'العنوان مطلوب',
+            'title.string'=> 'يجب ان يكون العنوان نص',
+            'image.required'=> 'الصورة مطلوبة',
+            'image.image'=> 'الرجاء اختيار صورة',
             ];
 
     }

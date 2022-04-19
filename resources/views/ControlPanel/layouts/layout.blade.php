@@ -186,31 +186,31 @@
               </a>
               <ul class="nav nav-treeview">
                 <li class="nav-item">
-                  <a href="{{ URL('about') }}" class="nav-link" id="aboutapp">
+                  <a href="{{ URL('static/1') }}" class="nav-link" id="aboutapp">
                     <i class="far fa-circle nav-icon"></i>
                     <p style="color: #fff; margin-right:5px; font-size:14px;">عن التطبيق</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{ URL('privacy') }}" class="nav-link" id="privacypolicy">
+                  <a href="{{ URL('static/2') }}" class="nav-link" id="privacypolicy">
                     <i class="far fa-circle nav-icon"></i>
                     <p style="color: #fff; margin-right:5px; font-size:14px;">سياسة الاستخدام</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{ URL('first/onboarding') }}" class="nav-link" id="onboarding1">
+                  <a href="{{ URL('static/3') }}" class="nav-link" id="onboarding1">
                     <i class="far fa-circle nav-icon"></i>
                     <p style="color: #fff; margin-right:5px; font-size:14px;">شاشة الترحيب الاولى</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{ URL('second/onboarding') }}" class="nav-link" id="onboarding2">
+                  <a href="{{ URL('static/4') }}" class="nav-link" id="onboarding2">
                     <i class="far fa-circle nav-icon"></i>
                     <p style="color: #fff; margin-right:5px; font-size:14px;">شاشة الترحيب الثانية</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{ URL('third/onboarding') }}" class="nav-link" id="onboarding3">
+                  <a href="{{ URL('static/5') }}" class="nav-link" id="onboarding3">
                     <i class="far fa-circle nav-icon"></i>
                     <p style="color: #fff; margin-right:5px; font-size:14px;">شاشة الترحيب الثالثة</p>
                   </a>
@@ -223,7 +223,29 @@
       </div>
       <!-- /.sidebar -->
     </aside>
+{{-- 
+    @if(Session::has('success'))
 
+
+    {{dd(Session::get('success'))}}
+    <div class="alert alert-success alert-dismissible fade show" style="background-color: #E3FCEF ;color: #003348;" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <strong></strong> {{ Session::get('success') }}
+    </div>
+@endif
+@if (\Session::has('error'))
+    <div class="alert alert-danger alert-dismissible fade show mb-0" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <strong>Error !</strong>  {!! \Session::get('error') !!}
+    </div>
+@endif
+@if (Session::has('warning'))
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <strong>Note !</strong>{!! Session::get('warning') !!}
+    </div>
+@endif --}}
+  
     @yield('content')
 
     <footer class="main-footer">
@@ -263,13 +285,13 @@
     @elseif (\Request::url() == URL('privacy'))
       $('#privacypolicy').addClass('active');
       $('#static_pages').addClass('active');
-    @elseif (\Request::url() == URL('first/onboarding'))
+    @elseif (\Request::url() == URL('onboarding1'))
       $('#onboarding1').addClass('active');
       $('#static_pages').addClass('active');
-    @elseif (\Request::url() == URL('second/onboarding'))
+    @elseif (\Request::url() == URL('onboarding2'))
       $('#onboarding2').addClass('active');
       $('#static_pages').addClass('active');
-      @elseif (\Request::url() == URL('third/onboarding'))
+      @elseif (\Request::url() == URL('onboarding3'))
       $('#onboarding3').addClass('active');
       $('#static_pages').addClass('active');
     @endif

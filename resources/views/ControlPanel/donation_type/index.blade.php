@@ -27,7 +27,7 @@
             </div>
             <a class="btn btn-info" href="{{ URL('donationtype/create') }}" style="margin-top: 10px">
                 نوع تبرع جديد
-              </a>
+            </a>
         </div><!-- /.container-fluid -->
     </section>
 
@@ -75,22 +75,27 @@
                                 <h6>{{ $donation_type->name }}</h6>
                             </td>
                             <td style="vertical-align: middle; text-align:center">
-                                <img alt="Avatar" src="{{asset('storage/uploads/images/'.$donation_type->image)}}"  style="width:60px; height:40px; border-radius: 8px; object-fit: contain;">
+                                <img alt="Avatar" src="{{asset('storage/uploads/images/'.$donation_type->image)}}"
+                                    style="width:60px; height:40px; border-radius: 8px; object-fit: contain;">
                             </td>
 
                             <td style="vertical-align: middle; text-align:center">
                                 <div class="container">
-                                @if ($donation_type->deleted_at == null)
-                                <form action="{{ URL('donationtype/delete/' . $donation_type->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-danger">حذف</button>
-                                </form>
-                                @else
-                                <form action="{{ URL('donationtype/restore/' . $donation_type->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-info">استرجاع</button>
-                                </form>
-                                @endif
+                                    <a class="btn btn-info btn-sm" href="{{ URL('donationtype/edit/' . $donation_type->id) }}">
+                                        تعديل
+                                    </a>
+                                    @if ($donation_type->deleted_at == null)
+                                    <form action="{{ URL('donationtype/delete/' . $donation_type->id) }}" method="POST" style="display: inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                                    </form>
+                                    @else
+                                    <form action="{{ URL('donationtype/restore/' . $donation_type->id) }}"
+                                        method="POST" style="display: inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-info btn-sm">استرجاع</button>
+                                    </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
