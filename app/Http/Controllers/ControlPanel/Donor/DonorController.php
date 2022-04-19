@@ -12,42 +12,46 @@ class DonorController extends Controller
     {
         $this->middleware('auth');
     }
-    
-    public function index(Request $request){
+
+    public function index(Request $request)
+    {
         $donors = Donor::select('*')->get();
         return view('ControlPanel.donor.index')->with('donors', $donors);
     }
 
-    public function enable (Request $request, $id) {
+    public function enable(Request $request, $id)
+    {
         $donor = Donor::find($id);
         $donor->activation_status = 1;
         $result = $donor->save();
 
         if ($result) {
             return redirect('donor');
-        }else{
+        } else {
             return redirect()->back();
         }
     }
 
-    public function disable (Request $request, $id) {
-    
+    public function disable(Request $request, $id)
+    {
+
         $donor = Donor::find($id);
         $donor->activation_status = 0;
         $result = $donor->save();
 
         if ($result) {
             return redirect('donor');
-        }else{
+        } else {
             return redirect()->back();
         }
     }
 
-    
-        public function destroy ($id) {
-    
-            $donor = Donor::find($id);
-            $result = $donor->delete();
-            return redirect('donor');
-        }
+
+    public function destroy($id)
+    {
+
+        $donor = Donor::find($id);
+        $result = $donor->delete();
+        return redirect('donor');
+    }
 }

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DonationType;
 use App\Http\Requests\AddDonationTypeRequest;
-use Illuminate\Support\Facades\Storage;
 
 class DonationTypeController extends Controller
 {
@@ -15,86 +14,38 @@ class DonationTypeController extends Controller
         $this->middleware('auth');
     }
 
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $donation_types = DonationType::select('*')->get();
         return view('ControlPanel.donation_type.index')->with('donation_types', $donation_types);
     }
 
-    public function create()
-    {
+    public function create(){
         return view('ControlPanel.donation_type.create');
     }
 
-    public function store(AddDonationTypeRequest $request)
-    {
-
-        $image = $request->file('image');
-        $path = 'public/uploads/images/';
-
-        $image_name = time() + rand(1, 10000000) . '.' . $image->getClientOriginalExtension();
-        Storage::disk('local')->put($path . $image_name, file_get_contents($image));
-        $status = Storage::disk('local')->exists($path . $image_name);
-
-        if ($status) {
-            $donation_type = new DonationType();
-            $donation_type->image = $image_name;
-            $donation_type->name = $request['name'];
-
-            $result = $donation_type->save();
-
-            if ($result) {
-                return redirect('donationtype');
-            } else {
-                return redirect()->back();
-            }
+    public function store(AddDonationTypeRequest $request){
+        $obj = parent::saveModel($request, DonationType::class);
+        if($obj){
+            return redirect('donationtype');
         }
+        return redirect()->back();
     }
 
 
-    public function edit($id)
-    {
+    public function edit($id){
         $donation_type = DonationType::find($id);
         return view('ControlPanel.donation_type.edit')->with('donation_type', $donation_type);
     }
 
-    public function update(AddDonationTypeRequest $request, $id)
-    {
-
-
-        $image = $request->file('image');
-        $path = 'public/uploads/images/';
-
-        $donation_type = DonationType::find($id);
-        if ($request->hasFile("image")) {
-            $image_name = time() + rand(1, 10000000) . '.' . $image->getClientOriginalExtension();
-            Storage::disk('local')->put($path . $image_name, file_get_contents($image));
-            $status = Storage::disk('local')->exists($path . $image_name);
-            $donation_type->image = $image_name;
-        }
-
-        $donation_type->name = $request['name'];
-
-        $result = $donation_type->save();
-
-        if ($result) {
-            return redirect('donationtype');
-        } else {
-            return redirect()->back();
-        }
-    }
-
-
-    public function destroy($id)
-    {
+    public function destroy($id){
         $donation_type = DonationType::find($id);
         $result = $donation_type->delete();
         return redirect()->back();
     }
 
-    public function restore($id)
-    {
+    public function restore($id){
         $result = DonationType::withTrashed()->where('id', $id)->restore();
         return redirect()->back();
     }
+
 }

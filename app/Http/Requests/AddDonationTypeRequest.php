@@ -38,6 +38,7 @@ class AddDonationTypeRequest extends FormRequest
             'name.string'=> 'يجب ان يكون الاسم نص',
             'name.unique'=> 'يجب ان يكون الاسم فريد',
             'image.image'=> 'الرجاء اختيار صورة',
+            'image.required_if'=> 'الصورة مطلوبة',
             ];
 
     }

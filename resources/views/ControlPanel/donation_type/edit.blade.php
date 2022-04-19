@@ -46,7 +46,7 @@
       </div>
       <!-- form start -->
       <!-- form start -->
-      <form method="post" action="{{ URL('donationtype/update/' . $donation_type->id) }}" enctype="multipart/form-data">
+      <form method="post" action="{{ URL('donationtype/store') }}" enctype="multipart/form-data">
         @csrf
         <div class="card-body">
 

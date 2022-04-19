@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +32,7 @@ Route::get('/donationtype', [App\Http\Controllers\ControlPanel\DonationType\Dona
 Route::get('donationtype/create', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'create']);
 Route::post('donationtype/store', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'store']);
 Route::get('donationtype/edit/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'edit']);
-Route::post('donationtype/update/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'update']);
+// Route::post('donationtype/update/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'update']);
 Route::post('donationtype/delete/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'destroy']);
 Route::post('donationtype/restore/{id}', [App\Http\Controllers\ControlPanel\DonationType\DonationTypeController::class, 'restore']);
 
