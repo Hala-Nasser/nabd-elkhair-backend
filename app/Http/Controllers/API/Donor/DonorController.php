@@ -214,6 +214,9 @@ if ($validator->fails()) {
         }
         
     }
+
+
+    
            
 
          public function addDonation(Request $request){

@@ -24,8 +24,9 @@ class AddDonationTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string',
-            'image'=> 'required|image',
+            //'name' => 'required|string|unique:donation_types,id,' . $this->id,
+            'name'=>'required|string|unique:donation_types,name,'.$this->id,
+            'image'=> 'nullable|required_if:id,null|image',
         ];
         
     }
@@ -35,8 +36,9 @@ class AddDonationTypeRequest extends FormRequest
         return [
             'name.required'=> 'الاسم مطلوب',
             'name.string'=> 'يجب ان يكون الاسم نص',
-            'image.required'=> 'الصورة مطلوبة',
+            'name.unique'=> 'يجب ان يكون الاسم فريد',
             'image.image'=> 'الرجاء اختيار صورة',
+            'image.required_if'=> 'الصورة مطلوبة',
             ];
 
     }

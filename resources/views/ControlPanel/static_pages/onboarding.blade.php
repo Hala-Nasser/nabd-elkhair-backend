@@ -42,20 +42,26 @@
     <!-- Default box -->
     <div class="card" style="margin-right: 10px; margin-left: 10px">
       <div class="card-header">
-        <h3 class="card-title" style="color: black;">نوع تبرع جديد</h3>
+        <h3 class="card-title" style="color: black;">شاشة الترحيب الثالثة</h3>
       </div>
       <!-- form start -->
-      <!-- form start -->
-      <form method="post" action="{{ URL('donationtype/store') }}" enctype="multipart/form-data">
-        <input type="hidden" value="{{null}}" name="id"/>
-
+      <form method="post" action="{{ URL('static/store/' . $staticPage->id) }}" enctype="multipart/form-data">
         @csrf
         <div class="card-body">
 
-          @if( !(empty($errors->get('name'))) )
+          <div class="form-group">
+            <label for="exampleInputFile">اسم الصفحة</label>
+            <div>
+              <input type="text" class="form-control"
+              style="width:100%; height:40px; margin-left:15px; margin-right:5px; display:block; padding-right: 10px; padding-left: 10px; pointer-events: none;"
+              value="{{$staticPage->name}}">
+            </div>
+          </div>
+
+          @if( !(empty($errors->get('title'))) )
           <div class="alert alert-custom" style="margin-bottom:5px; height:fit-content; padding: 5px; padding-top: 10px; padding-left: 20px; color: #99253a;
             background-color: #ffd8df;">
-            @foreach ($errors->get('name') as $error)
+            @foreach ($errors->get('title') as $error)
             <ul>
               <li>
                 {{ $error }}
@@ -66,10 +72,31 @@
           @endif
 
           <div class="form-group">
-            <label for="exampleInputFile">اسم نوع التبرع</label>
+            <label for="exampleInputFile">عنوان الصفحة</label>
             <div>
-              <input type="text" class="form-control" placeholder="أدخل الاسم" name="name"
-                style="width:100%; height:40px; margin-left:15px; margin-right:5px; display:block; padding-right: 10px;">
+              <input type="text" class="form-control" placeholder="أدخل العنوان" name="title"
+              style="width:100%; height:40px; margin-left:15px; margin-right:5px; display:block; padding-right: 10px; padding-left: 10px;"
+              value="{{$staticPage->title}}">
+            </div>
+          </div>
+
+          @if( !(empty($errors->get('content'))) )
+          <div class="alert alert-custom" style="margin-bottom:5px; height:fit-content; padding: 5px; padding-top: 10px; padding-left: 20px; color: #99253a;
+            background-color: #ffd8df;">
+            @foreach ($errors->get('content') as $error)
+            <ul>
+              <li>
+                {{ $error }}
+              </li>
+            </ul>
+            @endforeach
+          </div>
+          @endif
+
+          <div class="form-group">
+            <label for="exampleInputFile">محتوى الصفحة</label>
+            <div>
+                <textarea class="form-control" name="content" style="width:100%; height:200px; display:block; padding-right: 10px; padding-left: 10px; margin-left:15px; margin-right:5px;">{{$staticPage->content}}</textarea>
             </div>
           </div>
 
@@ -105,16 +132,14 @@
               </span>
               <input type="text" class="form-control " placeholder="لم يتم اختيار صورة بعد" disabled="">
             </div>
-
-            <div class="" hidden="" id="img_thumbnail_show" style="margin-top: 15px">
-              <img id="img_thumbnail" class="img_thumbnail" alt="200x200" style="width: 200px; height: 200px;" src=""
-                data-holder-rendered="true">
+            <div class="" {{$staticPage->image == null ? "hidden" : ""}} id="img_thumbnail_show" style="margin-top: 15px">
+              <img id="img_thumbnail" class="img_thumbnail" alt="200x200" style="width: 200px; height: 200px;"
+                src="{{asset('storage/uploads/images/'.$staticPage->image)}}" data-holder-rendered="true">
             </div>
-
           </div>
           <!-- /.card-body -->
 
-          <button type="submit" class="btn btn-primary">إضافة</button>
+          <button type="submit" class="btn btn-primary">حفظ</button>
 
       </form>
 

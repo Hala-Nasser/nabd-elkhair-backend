@@ -42,15 +42,15 @@
     <!-- Default box -->
     <div class="card" style="margin-right: 10px; margin-left: 10px">
       <div class="card-header">
-        <h3 class="card-title" style="color: black;">نوع تبرع جديد</h3>
+        <h3 class="card-title" style="color: black;">تعديل نوع التبرع</h3>
       </div>
       <!-- form start -->
       <!-- form start -->
       <form method="post" action="{{ URL('donationtype/store') }}" enctype="multipart/form-data">
-        <input type="hidden" value="{{null}}" name="id"/>
-
         @csrf
         <div class="card-body">
+
+          <input type="hidden" value="{{$donation_type->id}}" name="id"/>
 
           @if( !(empty($errors->get('name'))) )
           <div class="alert alert-custom" style="margin-bottom:5px; height:fit-content; padding: 5px; padding-top: 10px; padding-left: 20px; color: #99253a;
@@ -68,7 +68,7 @@
           <div class="form-group">
             <label for="exampleInputFile">اسم نوع التبرع</label>
             <div>
-              <input type="text" class="form-control" placeholder="أدخل الاسم" name="name"
+              <input type="text" class="form-control" placeholder="أدخل الاسم" name="name" value="{{$donation_type->name}}"
                 style="width:100%; height:40px; margin-left:15px; margin-right:5px; display:block; padding-right: 10px;">
             </div>
           </div>
@@ -106,15 +106,15 @@
               <input type="text" class="form-control " placeholder="لم يتم اختيار صورة بعد" disabled="">
             </div>
 
-            <div class="" hidden="" id="img_thumbnail_show" style="margin-top: 15px">
-              <img id="img_thumbnail" class="img_thumbnail" alt="200x200" style="width: 200px; height: 200px;" src=""
+            <div class="" id="img_thumbnail_show" style="margin-top: 15px">
+              <img id="img_thumbnail" class="img_thumbnail" alt="200x200" style="width: 200px; height: 200px;" src="{{asset('storage/uploads/images/'.$donation_type->image)}}"
                 data-holder-rendered="true">
             </div>
 
           </div>
           <!-- /.card-body -->
 
-          <button type="submit" class="btn btn-primary">إضافة</button>
+          <button type="submit" class="btn btn-primary">حفظ</button>
 
       </form>
 
