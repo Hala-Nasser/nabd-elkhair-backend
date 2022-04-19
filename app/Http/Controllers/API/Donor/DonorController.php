@@ -23,17 +23,16 @@ class DonorController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()->all()]);
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
         
         if(auth()->guard('donor')->attempt(['email' => request('email'), 'password' => request('password')])){
             $user = Donor::select('donors.*')->find(auth()->guard('donor')->user()->id);
             $user['token'] =  $user->createToken('MyApp',['donor'])->accessToken; 
-            $success = true;
-            return response()->json(['success'=>$success, 'data'=> $user], $this-> successStatus);
+            return response()->json($this->sendResponse($status=true,$message="User Logged successfully", $data=$user));
             
         }else{ 
-            return response()->json(['error' => ['Email or Password are Wrong.']], 200);
+            return response()->json($this->sendResponse($status=false,$message="Email or Password are Wrong.", $data=""));
         }
 
     }
@@ -62,23 +61,17 @@ class DonorController extends Controller
             ]);
 
                  if ($validator->fails()) { 
-                    return response()->json(['error'=>$validator->errors()], 401);            
+                    return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
                 }
 
-            
-                $donor = new Donor();
-                $donor->name = $request['name'];
-                $donor->email = $request['email'];
-                $donor->password = bcrypt($request['password']);
-                $donor->phone = $request['phone'];
-                $donor->location = $request['location'];
-                $donor->image = $request['image'];
-                $donor->activation_status = $request['activation_status'];
+                $data = $request->all();
+                $data['password'] =  bcrypt($request['password']);
+                $donor = Donor::create($data);
 
                 $success = $donor->save();
-                $donor_info = Donor::find($donor->id);
 
-                return response()->json(['success'=>$success, 'data'=> $donor_info], $this-> successStatus); 
+                return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$donor)); 
+                    
             }
 
 
@@ -89,7 +82,7 @@ class DonorController extends Controller
         $donor = Donor::find($request['user_id']);
         $donor->fcm_token = $request['fcm'];
         $success = $donor->save();
-        return response()->json(['success'=>$success, 'data'=> $donor], $this-> successStatus);
+        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data="")); 
     }
 
     //forgot password
@@ -100,11 +93,11 @@ class DonorController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()->all()]);
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
          $email = $request['email'];
         if(Donor::where('email',$email)->doesntExist()){
-            return response()->json(['message' => 'User doesn\'t exists!'],404);
+            return response()->json($this->sendResponse($status=false,$message="User doesn\'t exists!", $data=""));
         }
 
         $token = Str::random(10);
@@ -118,9 +111,9 @@ class DonorController extends Controller
             'body' => $token 
         ];
         Mail::to($email)->send(new ForgotPasswordMail($details));
-        return response()->json(['message' => 'Check Your Email!!'],200);
+        return response()->json($this->sendResponse($status=true,$message="Check Your Email!!", $data=""));
         }catch (\Exception $e){
-            return response()->json(['message' => $e],404);
+            return response()->json($this->sendResponse($status=false,$message=$e, $data=""));
         }
         
                 
@@ -135,20 +128,20 @@ class DonorController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()->all()]);
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));
         }
 
         $token = $request['token'];
         if(!$passwordReset = DB::table('password_resets')->where('token',$token)->first()){
-            return response()->json(['message' => 'Invalid Token'],400);
+            return response()->json($this->sendResponse($status=false,$message="Invalid Token", $data=""));
         }
         if(!$user = Donor::where('email',$passwordReset->email)->first()){
-            return response()->json(['message' => 'User doesn\'t exists!'],404);
+            return response()->json($this->sendResponse($status=false,$message="User doesn\'t exists!", $data=""));
         }
 
         $user->password = Hash::make($request['password']);
-        $user->save();
-        return response()->json(['message' => 'success'],200);
+        $result = $user->save();
+        return response()->json($this->sendResponse($status=$result,$message=(($result?"Password reset successfully":"Failed")), $data=""));
 
     }
 
@@ -161,17 +154,17 @@ class DonorController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()->all()]);
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
 
         $user = auth()->guard('donor-api')->user();
         if(!Hash::check($request['password'], $user->password)){
-            return response()->json(['message' => 'Invalid Password'],400);
+            return response()->json($this->sendResponse($status=false,$message="Invalid Password", $data=""));            
         }
 
         $user->password = Hash::make($request['new_password']);
-        $user->save();
-        return response()->json(['message' => 'Password successfully updated'],200);
+        $status = $user->save();
+        return response()->json($this->sendResponse($status=$status,$message=(($status)?"Password successfully updated":"failed"), $data=""));
 
     }
 
@@ -180,11 +173,9 @@ class DonorController extends Controller
         try{
             $token = auth()->guard('donor-api')->user()->token();
             $token->revoke();
-            $response = ['message' => 'You have been successfully logged out!'];
-            return response($response, 200);
+            return response()->json($this->sendResponse($status=true,"You have been successfully logged out!", $data=""));
         }catch (Exception $e){
-            $response = ['message' => $e];
-            return response($response, 422);
+            return response()->json($this->sendResponse($status=false,$message=$e, $data=""));
         }
        
     }
@@ -200,19 +191,16 @@ class DonorController extends Controller
         ]);
 
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
 
     
         $data = $request->all();
         $data['complainer_id'] = auth()->guard('donor-api')->user()->id;
         $response = Complaint::create($data);
+        $status = $response->save();
 
-        if($response){
-              return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
-        }else{
-            return response()->json(['status'=>'fail'], 500); 
-        }
+        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response)); 
         
     }
 
@@ -232,18 +220,16 @@ class DonorController extends Controller
             ]);
 
             if ($validator->fails()) { 
-                return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
             }
 
              $data = $request->all();
                     $data['donor_id'] = auth()->guard('donor-api')->user()->id;
                     $response = Donation::create($data);
 
-                    if($response){
-                        return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
-                    }else{
-                        return response()->json(['status'=>'fail'], 500); 
-                    }
+                    $status = $response->save();
+
+                    return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response));             
 
          }   
 }

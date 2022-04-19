@@ -28,6 +28,12 @@ class Charity extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'address',
+        'image',
+        'activation_status',
+        'about',
+        'open_time'
     ];
 
     /**

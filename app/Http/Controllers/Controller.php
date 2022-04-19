@@ -34,6 +34,13 @@ class Controller extends BaseController
         return $obj;
     }
 
+    protected function sendResponse ($status, $message, $data) {
+        return [
+            "status"    => $status,
+            "message"   => $message,
+            "data"      => $data
+        ];
+    }
 
     public function upload_image($image)
     {
