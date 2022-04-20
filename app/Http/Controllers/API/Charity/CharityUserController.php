@@ -34,7 +34,7 @@ class CharityUserController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()->all()]);
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
 
         if(auth()->guard('charity')->attempt(['email' => request('email'), 'password' => request('password')])){
@@ -45,9 +45,9 @@ class CharityUserController extends Controller
             $success =  $admin;
             $success['token'] =  $admin->createToken('MyApp',['charity'])->accessToken; 
 
-            return response()->json($success, 200);
+            return response()->json($this->sendResponse($status=true,$message="User Logged successfully", $data=$success));
         }else{ 
-            return response()->json(['error' => ['Email or Password are Wrong.']], 200);
+            return response()->json($this->sendResponse($status=false,$message="Email or Password are Wrong.", $data=""));
         }
     }
 
@@ -67,6 +67,7 @@ class CharityUserController extends Controller
                 'regex:/[0-9]/',      // must contain at least one digit
                 'regex:/[@$!%*#?&]/', // must contain a special character
             ], 
+            'c_password' => 'required|same:password',
             'open_time' => 'required', 
             'about' => 'required',
             'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10',
@@ -76,24 +77,17 @@ class CharityUserController extends Controller
         ]);
 
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
 
     
-        $charity = new Charity();
-        $charity->name = $request['name'];
-        $charity->email = $request['email'];
-        $charity->password = bcrypt($request['password']);
-        $charity->phone = $request['phone'];
-        $charity->address = $request['address'];
-        $charity->image = $request['image'];
-        $charity->activation_status = $request['activation_status'];
-        $charity->about = $request['about'];
-        $charity->open_time = $request['open_time'];
+        $data = $request->all();
+        $data['password'] =  bcrypt($request['password']);
+        $charity = Charity::create($data);
 
         $success = $charity->save();
 
-        return response()->json(['success'=>$success], $this-> successStatus); 
+        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$charity)); 
     }
 
     public function forgotPassword(Request $request){ 
@@ -103,11 +97,11 @@ class CharityUserController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()->all()]);
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));
         }
          $email = $request['email'];
         if(Charity::where('email',$email)->doesntExist()){
-            return response()->json(['message' => 'User doesn\'t exists!'],404);
+            return response()->json($this->sendResponse($status=false,$message="User doesn\'t exists!", $data=""));
         }
 
         $token = Str::random(10);
@@ -121,9 +115,9 @@ class CharityUserController extends Controller
             'body' => $token 
         ];
         Mail::to($email)->send(new ForgotPasswordMail($details));
-        return response()->json(['message' => 'Check Your Email!!'],200);
+        return response()->json($this->sendResponse($status=true,$message="Check Your Email!!", $data=""));
         }catch (\Exception $e){
-            return response()->json(['message' => $e],404);
+            return response()->json($this->sendResponse($status=false,$message=$e, $data=""));
         }
         
                 
@@ -137,21 +131,21 @@ class CharityUserController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()->all()]);
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));
         }
 
         $token = $request['token'];
         if(!$passwordReset = DB::table('password_resets')->where('token',$token)->first()){
-            return response()->json(['message' => 'Invalid Token'],400);
+            return response()->json($this->sendResponse($status=false,$message="Invalid Token", $data=""));
         }
         if(!$user = Charity::where('email',$passwordReset->email)->first()){
-            return response()->json(['message' => 'User doesn\'t exists!'],404);
+            return response()->json($this->sendResponse($status=false,$message="User doesn\'t exists!", $data=""));
         }
 
         $user->password = Hash::make($request['password']);
-        $user->save();
-        return response()->json(['message' => 'success'],200);
+        $result = $user->save();
 
+        return response()->json($this->sendResponse($status=$result,$message=(($result?"Password reset successfully":"Failed")), $data=""));
     }
 
 
@@ -159,11 +153,9 @@ class CharityUserController extends Controller
         try{
             $token = auth()->guard('charity-api')->user()->token();
             $token->revoke();
-            $response = ['message' => 'You have been successfully logged out!'];
-            return response($response, 200);
+            return response()->json($this->sendResponse($status=true,"You have been successfully logged out!", $data=""));
         }catch (Exception $e){
-            $response = ['message' => $e];
-            return response($response, 422);
+            return response()->json($this->sendResponse($status=false,$message=$e, $data=""));
         }
        
     }
@@ -177,26 +169,16 @@ class CharityUserController extends Controller
         ]);
 
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
-
-        $user = Donor::where('id',$request['defendant_id'])->first();
-    
-        if($user){
     
             $data = $request->all();
             $data['complainer_id'] = auth()->guard('charity-api')->user()->id;
             $data['complainer_type'] = 'Charity';
             $response = Complaint::create($data);
+            $status = $response->save();
 
-            if($response){
-                return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
-            }else{
-                return response()->json(['status'=>'fail'], 500); 
-            }
-        }else{
-            return response()->json(['message' => 'defendant User Not Found'],400);
-        }
+            return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response)); 
     }
 
     public function addCampaign(Request $request) 
@@ -211,7 +193,7 @@ class CharityUserController extends Controller
         ]);
 
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
 
     
@@ -219,11 +201,9 @@ class CharityUserController extends Controller
         $data['charity_id'] = auth()->guard('charity-api')->user()->id;
         $response = Campaign::create($data);
 
-        if($response){
-              return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
-        }else{
-            return response()->json(['status'=>'fail'], 500); 
-        }
+        $status = $response->save();
+
+        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response)); 
         
     }
 
@@ -240,9 +220,9 @@ class CharityUserController extends Controller
         $charity->about = $request['about'];
         $charity->open_time = $request['open_time'];
 
-        $success = $charity->save();
+        $status = $charity->save();
 
-        return response()->json(['success'=>$success,'message'=>'Profile Updated Successfully'], $this-> successStatus); 
+        return response()->json($this->sendResponse($status=$success,$message=(($success)?"Profile updated successfully":"failed"), $data=$charity));
     }
 
     public function updateCampaign (Request $request){
@@ -253,18 +233,22 @@ class CharityUserController extends Controller
         ]);
 
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
         $campaign = Campaign::find($request->campaign_id);
         $campaign->expiry_date = $request->expiry_date;
         $campaign->expiry_time = $request->expiry_time;
-        $success = $campaign->update();
-        return response()->json(['success'=>$success,'message'=>'Campaign Updated Successfully'], $this-> successStatus); 
+
+        $status = $campaign->update();
+
+        return response()->json($this->sendResponse($status=$success,$message=(($success)?"Campaign updated successfully":"failed"), $data=$campaign));
+
     }
 
     public function deleteCampaign ($id){
         $success = Campaign::find($id)->delete();
-        return response()->json(['success'=>$success,'message'=>'Campaign deleted Successfully'], $this-> successStatus); 
+
+        return response()->json($this->sendResponse($status=$success,$message=(($success)?"Campaign deleted successfully":"failed"), $data=""));
     }
 
     public function setNewAccountPassword(Request $request){ 
@@ -275,69 +259,20 @@ class CharityUserController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()->all()]);
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
 
         $user = auth()->guard('charity-api')->user();
         if(!Hash::check($request['password'], $user->password)){
-            return response()->json(['message' => 'Invalid Password'],400);
+            return response()->json($this->sendResponse($status=false,$message="Invalid Password", $data=""));            
         }
 
         $user->password = Hash::make($request['new_password']);
-        $user->save();
-        return response()->json(['message' => 'Password successfully updated'],200);
+        $status = $user->save();
+        return response()->json($this->sendResponse($status=$status,$message=(($status)?"Password successfully updated":"failed"), $data=""));
 
     }
 
-    public function addPaymentLinks(Request $request) 
-        { 
-            $data = $request->all();
-            $data['charity_id'] = auth()->guard('charity-api')->user()->id;
-            $response = PaymentLink::create($data);
-
-            if($response){
-                return response()->json(['status'=>'success','data'=>$response], $this-> successStatus); 
-            }else{
-                return response()->json(['status'=>'fail'], 500); 
-            }
-            
-        }
-
-   
-        public function getComplaints(){
-            $status = Complaint::where('complainer_type','Charity')->get(); 
-            return response()->json($status, $this->successStatus);
-    }
-
-    public function getDonationTypes(){
-        $status = DonationType::all();    
-        return response()->json($status, $this->successStatus);
-    }
-
-    public function getPaymentLinks(){
-        $status = PaymentLink::all();    
-        return response()->json($status, $this->successStatus);
-    }
-
-    public function getCampaigns(){
-        $status = Campaign::all();    
-        return response()->json($status, $this->successStatus);
-    }
-
-    public function getCharity(){
-        $status = Charity::where('id',auth()->guard('charity-api')->user()->id)->get();    
-        return response()->json($status, $this->successStatus);
-    }
-
-    public function getDonations(){
-        $user = Donation::with('donor')->with('campaign')
-        ->get(); 
-        // $diffInDays = $user->created_at->diffInDays();
-        //  $showDiff =  $user->created_at->addDays($diffInDays)->diffInHours().' Hours';
-        // echo $showDiff;
-        return response()->json($user, $this->successStatus);
-    }
-    
     public function setDonationAcceptance (Request $request){
         $validator = Validator::make($request->all(), [ 
             'donation_id' => 'required',
@@ -345,12 +280,12 @@ class CharityUserController extends Controller
         ]);
 
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
         $donation = Donation::find($request->donation_id);
         $donation->acceptance = $request->acceptance;
         $success = $donation->update();
-        return response()->json(['success'=>$success,'message'=>'Donation Acceptance Updated Successfully'], $this-> successStatus); 
+        return response()->json($this->sendResponse($status=$success,$message=(($success)?"Donation Acceptace successfully updated":"failed"), $data=""));
     }
 
     public function setDonationReceived (Request $request){
@@ -360,12 +295,58 @@ class CharityUserController extends Controller
         ]);
 
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
         $donation = Donation::find($request->donation_id);
         $donation->received = $request->received;
         $success = $donation->update();
-        return response()->json(['success'=>$success,'message'=>'Donation Received Updated Successfully'], $this-> successStatus); 
+        return response()->json($this->sendResponse($status=$success,$message=(($success)?"Donation Received successfully updated":"failed"), $data=""));
     }
 
+    public function addPaymentLinks(Request $request) { 
+            $data = $request->all();
+            $data['charity_id'] = auth()->guard('charity-api')->user()->id;
+            $response = PaymentLink::create($data);
+
+            $status = $response->save();
+
+        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response)); 
+          
+    }
+
+   
+    public function getComplaints(){
+        $list = Complaint::where('complainer_type','Donor')->get(); 
+        return response()->json($this->sendResponse($status=true,$message="", $data=$list)); 
+    }
+
+    public function getDonationTypes(){
+        $list = DonationType::all();    
+        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    }
+
+    public function getPaymentLinks(){
+        $list = PaymentLink::all();    
+        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    }
+
+    public function getCampaigns(){
+        $list = Campaign::all();    
+        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    }
+
+    public function getCharity(){
+        $list = Charity::where('id',auth()->guard('charity-api')->user()->id)->get();    
+        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    }
+
+    public function getDonations(){
+        $list = Donation::with('donor')->with('campaign')
+        ->get(); 
+        // $diffInDays = $user->created_at->diffInDays();
+        //  $showDiff =  $user->created_at->addDays($diffInDays)->diffInHours().' Hours';
+        // echo $showDiff;
+        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    }
+    
 }
