@@ -4,232 +4,160 @@ namespace App\Http\Controllers\API\Donor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Donor; 
-use App\Models\Charity; 
+use App\Models\Donor;
+use App\Models\Charity;
 use App\Models\Complaint;
 use App\Models\Donation;
-use Illuminate\Support\Facades\Auth; 
-use Validator;
+use Illuminate\Support\Facades\DB;
+use App\Mail\ForgotPasswordMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class DonorController extends Controller
 {
-    public $successStatus = 200;
+    // public $successStatus = 200;
 
     //login
-    public function login(Request $request){
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if($validator->fails()){
-            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
+    public function login(Request $request)
+    {
+        if (Donor::where('email', request('email'))->doesntExist()) {
+            return response()->json($this->sendResponse($status = false, $message = "المستخدم غير موجود", $data = null));
         }
-        
-        if(auth()->guard('donor')->attempt(['email' => request('email'), 'password' => request('password')])){
+        if (auth()->guard('donor')->attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Donor::select('donors.*')->find(auth()->guard('donor')->user()->id);
-            $user['token'] =  $user->createToken('MyApp',['donor'])->accessToken; 
-            return response()->json($this->sendResponse($status=true,$message="User Logged successfully", $data=$user));
-            
-        }else{ 
-            return response()->json($this->sendResponse($status=false,$message="Email or Password are Wrong.", $data=""));
+            $user['token'] =  $user->createToken('MyApp', ['donor'])->accessToken;
+            return response()->json($this->sendResponse($status = true, $message = "تم تسجيل الدخول بنجاح", $data = $user));
+        } else {
+            return response()->json($this->sendResponse($status = false, $message = "البريد الالكتروني أو كلمة المرور غير صحيحة", $data = null));
         }
-
     }
 
 
     //register
-    public function register(Request $request) 
-    { 
-        $validator = Validator::make($request->all(), [ 
-                'name' => 'required', 
-                'email' => 'required|email', 
-                'password' => [
-                    'required',
-                    'string',
-                    'min:8',             // must be at least 8 characters in length
-                    'regex:/[a-z]/',      // must contain at least one lowercase letter
-                    'regex:/[A-Z]/',      // must contain at least one uppercase letter
-                    'regex:/[0-9]/',      // must contain at least one digit
-                    'regex:/[@$!%*#?&]/', // must contain a special character
-                ], 
-                'c_password' => 'required|same:password', 
-                'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10',
-                'location' => 'required',
-                'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg',
-                'activation_status' => 'required'
-            ]);
-
-                 if ($validator->fails()) { 
-                    return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
-                }
-
-                $data = $request->all();
-                $data['password'] =  bcrypt($request['password']);
-                $donor = Donor::create($data);
-
-                $success = $donor->save();
-
-                return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$donor)); 
-                    
+    public function register(Request $request)
+    {
+        //المفترض افحص انو الايميل مش موجود برضو بالجمعية
+        if (Donor::where('email', request('email'))->doesntExist()) {
+            $success = false;
+            $obj = parent::saveModel($request, Donor::class);
+            if ($obj) {
+                $success = true;
+            } else {
+                $success = false;
             }
+            return response()->json($this->sendResponse($status = $success, $message = (($success) ? "تم التسجيل بنجاح" : "فشل التسجيل"), $data = (($success) ? $obj : null)));
+        }
+        return response()->json($this->sendResponse($status = false, $message = "المستخدم موجود بالفعل", $data = null));
+    }
 
-
-
-
+    //store fcm token
     public function storeFCMToken(Request $request)
     {
+        $donors = Donor::select('*')->where('fcm_token', $request['fcm'])->get();
+        foreach ($donors as $donor) {
+            $donor->fcm_token = null;
+            $donor->save();
+        }
+        //المفترض افحص برضو بجدول الجمعيات لكن لسا ما تم اضافة التوكن على بيانات الجدول
+
         $donor = Donor::find($request['user_id']);
         $donor->fcm_token = $request['fcm'];
         $success = $donor->save();
-        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data="")); 
+        return response()->json($this->sendResponse($status = $success, $message = (($success) ? "تم اضافة التوكن بنجاح" : "فشل اضافة التوكن"), $data = (($success) ? $donor : null)));
     }
 
     //forgot password
-    public function forgotPassword(Request $request){ 
+    public function forgotPassword(Request $request)
+    {
 
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ]);
-
-        if($validator->fails()){
-            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
-        }
-         $email = $request['email'];
-        if(Donor::where('email',$email)->doesntExist()){
-            return response()->json($this->sendResponse($status=false,$message="User doesn\'t exists!", $data=""));
+        $email = $request['email'];
+        if (Donor::where('email', $email)->doesntExist()) {
+            return response()->json($this->sendResponse($status = false, $message = "المستخدم غير موجود", $data = null));
         }
 
         $token = Str::random(10);
-        try{
-           DB::table('password_resets')->insert([
-            'email' => $email,
-            'token' => $token
-        ]); 
-        $details = [
-            'title' => 'لقد قمت بطلب إستعادة كلمة مرورك',
-            'body' => $token 
-        ];
-        Mail::to($email)->send(new ForgotPasswordMail($details));
-        return response()->json($this->sendResponse($status=true,$message="Check Your Email!!", $data=""));
-        }catch (\Exception $e){
-            return response()->json($this->sendResponse($status=false,$message=$e, $data=""));
+        try {
+            DB::table('password_resets')->insert([
+                'email' => $email,
+                'token' => $token
+            ]);
+            $details = [
+                'title' => 'لقد قمت بطلب إستعادة كلمة مرورك',
+                'body' => $token
+            ];
+            Mail::to($email)->send(new ForgotPasswordMail($details));
+            return response()->json($this->sendResponse($status = true, $message = "تم إرسال رمز التحقق إلى بريدك الالكتروني", $data = ""));
+        } catch (\Exception $e) {
+            return response()->json($this->sendResponse($status = false, $message = $e, $data = ""));
         }
-        
-                
     }
 
     //reset password
-    public function resetPassword(Request $request){ 
-
-        $validator = Validator::make($request->all(), [
-            'token' => 'required',
-            'password' => 'required|min:8|confirmed',
-        ]);
-
-        if($validator->fails()){
-            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));
-        }
-
+    public function resetPassword(Request $request)
+    {
         $token = $request['token'];
-        if(!$passwordReset = DB::table('password_resets')->where('token',$token)->first()){
-            return response()->json($this->sendResponse($status=false,$message="Invalid Token", $data=""));
+        if (!$passwordReset = DB::table('password_resets')->where('token', $token)->first()) {
+            return response()->json($this->sendResponse($status = false, $message = "كود التحقق غير صحيح", $data = null));
         }
-        if(!$user = Donor::where('email',$passwordReset->email)->first()){
-            return response()->json($this->sendResponse($status=false,$message="User doesn\'t exists!", $data=""));
+        if (!$user = Donor::where('email', $passwordReset->email)->first()) {
+            return response()->json($this->sendResponse($status = false, $message = "المستخدم غير موجود", $data = null));
         }
 
         $user->password = Hash::make($request['password']);
         $result = $user->save();
-        return response()->json($this->sendResponse($status=$result,$message=(($result?"Password reset successfully":"Failed")), $data=""));
-
+        if($result){
+                DB::table('password_resets')->where('token', $token)->delete();
+        }
+        return response()->json($this->sendResponse($status = $result, $message = (($result ? "تم إعادة تعيين كلمة المرور بنجاح" : "فشل إعادة تعيين كلمة المرور")), $data = (($result ? $user : null))));
     }
 
     //change password
-    public function setNewAccountPassword(Request $request){ 
-
-        $validator = Validator::make($request->all(), [
-            'password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
-        ]);
-
-        if($validator->fails()){
-            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
-        }
-
+    public function setNewAccountPassword(Request $request)
+    {
         $user = auth()->guard('donor-api')->user();
-        if(!Hash::check($request['password'], $user->password)){
-            return response()->json($this->sendResponse($status=false,$message="Invalid Password", $data=""));            
+        if (!Hash::check($request['password'], $user->password)) {
+            return response()->json($this->sendResponse($status = false, $message = "كلمة المرور غير صحيحة", $data = null));
         }
 
         $user->password = Hash::make($request['new_password']);
         $status = $user->save();
-        return response()->json($this->sendResponse($status=$status,$message=(($status)?"Password successfully updated":"failed"), $data=""));
-
+        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "تم تغيير كلمة المرور بنجاح" : "فشل تغيير كلمة المرور"), $data = (($status) ? $user : null)));
     }
 
     //logout
-    public function logout () {
-        try{
+    public function logout()
+    {
+        try {
             $token = auth()->guard('donor-api')->user()->token();
             $token->revoke();
-            return response()->json($this->sendResponse($status=true,"You have been successfully logged out!", $data=""));
-        }catch (Exception $e){
-            return response()->json($this->sendResponse($status=false,$message=$e, $data=""));
+            return response()->json($this->sendResponse($status = true, "تم تسجيل الخروج بنجاح", $data = ""));
+        } catch (\Exception $e) {
+            return response()->json($this->sendResponse($status = false, $message = $e, $data = ""));
         }
-       
     }
 
-   
-           //add complaint
-    public function addComplaint(Request $request) 
-    { 
-            $validator = Validator::make($request->all(), [ 
-            'defendant_id' => 'required', 
-            'complainer_type' => 'required',
-            'complaint_reason' => 'required',
-        ]);
 
-        if ($validator->fails()) { 
-            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
-        }
-
-    
+    //add complaint
+    public function addComplaint(Request $request)
+    {
         $data = $request->all();
         $data['complainer_id'] = auth()->guard('donor-api')->user()->id;
         $response = Complaint::create($data);
         $status = $response->save();
 
-        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response)); 
-        
+        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "success" : "failed"), $data = $response));
     }
 
 
-    
-           
+    public function addDonation(Request $request)
+    {
+        $data = $request->all();
+        $data['donor_id'] = auth()->guard('donor-api')->user()->id;
+        $response = Donation::create($data);
 
-         public function addDonation(Request $request){
-            $validator = Validator::make($request->all(), [ 
-                'charity_id' => 'required', 
-                'donation_type_id' => 'required',
-                'donation_way' => 'required',
-                'donor_phone' => 'required',
-                'donor_district' => 'required',
-                'donor_city' => 'required',
-                'donor_address' => 'required',
-            ]);
+        $status = $response->save();
 
-            if ($validator->fails()) { 
-            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
-            }
-
-             $data = $request->all();
-                    $data['donor_id'] = auth()->guard('donor-api')->user()->id;
-                    $response = Donation::create($data);
-
-                    $status = $response->save();
-
-                    return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response));             
-
-         }   
+        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "success" : "failed"), $data = $response));
+    }
 }

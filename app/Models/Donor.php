@@ -23,6 +23,10 @@ class Donor extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'location',
+        'image',
+        'activation_status'
     ];
 
     /**

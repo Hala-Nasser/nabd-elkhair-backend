@@ -28,7 +28,12 @@ class Controller extends BaseController
             $obj->image = $this->upload_image($request->file('image'));
         }
 
-        $obj->forceFill(Arr::except($request->all(), ['image', '_token']));
+        if (Arr::has($request->all(), 'password')) {
+            $obj->password =  bcrypt($request->password);
+        }
+        
+
+        $obj->forceFill(Arr::except($request->all(), ['image', '_token', 'password', 'c_password']));
 
         $obj->save();
         return $obj;
