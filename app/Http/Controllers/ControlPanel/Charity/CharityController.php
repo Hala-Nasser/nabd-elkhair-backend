@@ -42,7 +42,7 @@ class CharityController extends Controller
 
             $notification_content = ' تم إضافة جمعية ' . $charity->name;
             //send notification
-            $this->sendNotification('تم اضافة جمعية جديدة', $notification_content);
+            $this->sendNotification('جمعية جديدة', $notification_content);
         }
 
         if ($result) {
