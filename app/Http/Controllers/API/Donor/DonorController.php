@@ -11,6 +11,7 @@ use App\Models\Donation;
 use Illuminate\Support\Facades\DB;
 use App\Mail\ForgotPasswordMail;
 use App\Models\Campaign;
+use App\Models\DonationType;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
@@ -41,7 +42,7 @@ class DonorController extends Controller
         //المفترض افحص انو الايميل مش موجود برضو بالجمعية
         if (Donor::where('email', request('email'))->doesntExist()) {
             $success = false;
-            $obj = parent::saveModel($request, Donor::class);
+            $obj = parent::saveModel($request, Donor::class, true);
             if ($obj) {
                 $success = true;
             } else {
@@ -214,9 +215,15 @@ class DonorController extends Controller
     public function updateProfile(Request $request){
         $donor = Donor::find($request['id']);
 
-        $obj = parent::saveModel($request, Donor::class);
+        $obj = parent::saveModel($request, Donor::class, true);
 
         return response()->json($this->sendResponse($status = $obj, $message = (($obj) ? "تم تعديل الملف الشخصي بنجاح" : "فشل تعديل الملف الشخصي"), $data = $obj));
+
+    }
+
+    public function getDonationTypes(){
+        $donation_types = DonationType::select('*')->get();
+        return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $donation_types));
 
     }
 
