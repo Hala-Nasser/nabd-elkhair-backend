@@ -24,7 +24,7 @@ class DonationTypeController extends Controller
     }
 
     public function store(AddDonationTypeRequest $request){
-        $obj = parent::saveModel($request, DonationType::class);
+        $obj = parent::saveModel($request, DonationType::class, false);
         if($obj){
             return redirect('donationtype');
         }
