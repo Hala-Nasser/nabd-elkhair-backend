@@ -25,7 +25,7 @@ class ComplaintController extends Controller
                 $complaint->defendant_name = $donor->name;
             }else{
                 $donor = Donor::find($complaint->complainer_id);
-                $complaint->complainer_name = $donor->name;
+                $complaint->complainer_name = $donor->name??null;
                 $charity = Charity::find($complaint->defendant_id);
                 $complaint->defendant_name = $charity->name;
             }

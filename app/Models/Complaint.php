@@ -21,4 +21,9 @@ class Complaint extends Model
         'complainer_type',
         'complaint_reason',
     ];
+
+
+    public function donor() {
+        return $this->belongsTo('App\Models\Donor','donor_id','complainer_id');
+    }
 }
