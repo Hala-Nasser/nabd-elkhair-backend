@@ -15,6 +15,7 @@ use App\Models\DonationType;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use App\Models\StaticPage;
 
 class DonorController extends Controller
 {
@@ -168,6 +169,10 @@ class DonorController extends Controller
 
     public function CampaignsAccordingToDonationType($donation_type){
         $campaigns = Campaign::select('*')->where('donation_type_id', $donation_type)->get();
+        foreach($campaigns as $campaign){
+            $campaign->charity = Charity::find($campaign->charity_id);
+        }
+        
         return response()->json($this->sendResponse($status = true, $message = "تم جلب الحملات بنجاح", $data = $campaigns));
     }
 
@@ -225,6 +230,13 @@ class DonorController extends Controller
         $donation_types = DonationType::select('*')->get();
         return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $donation_types));
 
+    }
+
+
+    public function getStaticPages($id)
+    {
+        $staticPage = StaticPage::find($id);
+        return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $staticPage));
     }
 
 }

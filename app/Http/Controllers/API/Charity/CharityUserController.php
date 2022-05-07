@@ -201,7 +201,7 @@ class CharityUserController extends Controller
         $data['charity_id'] = auth()->guard('charity-api')->user()->id;
         $response = Campaign::create($data);
 
-        $status = $response->save();
+        $success = $response->save();
 
         return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response)); 
         
