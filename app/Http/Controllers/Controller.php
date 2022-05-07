@@ -62,7 +62,7 @@ class Controller extends BaseController
     public function upload_image_api($image)
     {
         $path = 'public/uploads/images/';
-        $image_name = time() + rand(1, 10000000) . '.jpg';
+        $image_name = time() + rand(1, 10000000) . '.' . $image->getClientOriginalName();
         Storage::disk('local')->put($path . $image_name, file_get_contents($image));
 
         return $image_name;

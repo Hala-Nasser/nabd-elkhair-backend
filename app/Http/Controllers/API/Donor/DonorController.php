@@ -50,7 +50,7 @@ class DonorController extends Controller
             }
             return response()->json($this->sendResponse($status = $success, $message = (($success) ? "تم التسجيل بنجاح" : "فشل التسجيل"), $data = (($success) ? $obj : null)));
         }
-        return response()->json($this->sendResponse($status = false, $message = "المستخدم موجود بالفعل", $data = null));
+        return response()->json($this->sendResponse($status = false, $message = "البريد الالكتروني مستخدم بالفعل", $data = null));
     }
 
     //store fcm token
