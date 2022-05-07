@@ -44,11 +44,14 @@ class StaticPagesController extends Controller
 
             $onboarding = StaticPage::find($id);
 
-            $image_name = parent::upload_image($request->file('image'));
+            if($request->hasFile('image')){
+                $image_name = parent::upload_image($request->file('image'));
+                $onboarding->image = $image_name;
+            }
+            
 
             $onboarding->content = $request['content'];
             $onboarding->title = $request['title'];
-            $onboarding->image = $image_name;
             $onboarding->save();
         } else {
             $static = StaticPage::find($id);

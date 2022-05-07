@@ -22,10 +22,15 @@ class ComplaintController extends Controller
                 $charity = Charity::find($complaint->complainer_id);
                 $complaint->complainer_name = $charity->name;
                 $donor = Donor::find($complaint->defendant_id);
-                $complaint->defendant_name = $donor->name;
+                if($donor){
+                    $complaint->defendant_name = $donor->name;
+                }
+                
             }else{
                 $donor = Donor::find($complaint->complainer_id);
-                $complaint->complainer_name = $donor->name;
+                if($donor){
+                    $complaint->complainer_name = $donor->name;
+                }  
                 $charity = Charity::find($complaint->defendant_id);
                 $complaint->defendant_name = $charity->name;
             }
