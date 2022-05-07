@@ -50,7 +50,7 @@ class Handler extends ExceptionHandler
                         "data"      => null
                     ]);
                 }
-                return ;
+                return parent::render($request, $exception);
 }
 
 }

@@ -20,9 +20,12 @@ class ComplaintController extends Controller
         foreach ($complaints as $complaint) {
             if ($complaint->complainer_type == "charity"){
                 $charity = Charity::find($complaint->complainer_id);
-                $complaint->complainer_name = $charity->name;
+                $complaint->complainer_name = $charity->name??null;
                 $donor = Donor::find($complaint->defendant_id);
-                $complaint->defendant_name = $donor->name;
+                if($donor){
+                    $complaint->defendant_name = $donor->name;
+                }
+                
             }else{
                 $donor = Donor::find($complaint->complainer_id);
                 $complaint->complainer_name = $donor->name??null;

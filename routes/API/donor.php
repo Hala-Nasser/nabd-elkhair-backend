@@ -27,6 +27,7 @@ Route::get('donor/profile/{id}',[DonorController::class, 'profile']);
 Route::get('donor/mydonation/{id}',[DonorController::class, 'myDonation']);
 Route::post('donor/profile/update',[DonorController::class, 'updateProfile']);
 Route::get('donor/donationtype', [DonorController::class, 'getDonationTypes']);
+Route::get('donor/static/{id}', [DonorController::class, 'getStaticPages']);
 
 
 
