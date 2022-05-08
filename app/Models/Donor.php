@@ -51,4 +51,8 @@ class Donor extends Authenticatable
     public function donation() {
         return $this->hasMany('App\Models\Donation');
     }
+
+    public function complaint() {
+        return $this->hasMany('App\Models\Complaint');
+    }
 }

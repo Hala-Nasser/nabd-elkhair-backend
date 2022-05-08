@@ -22,12 +22,11 @@ use Illuminate\Support\Facades\Mail;
 
 class CharityUserController extends Controller
 {
-    public $successStatus = 200;
+    // public $successStatus = 200;
     
     //login
     public function login(Request $request)
     {
-        // $token = Str::random(80);
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
@@ -37,59 +36,76 @@ class CharityUserController extends Controller
             return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
 
-        if(auth()->guard('charity')->attempt(['email' => request('email'), 'password' => request('password')])){
-            // $request->user('charity-api')->forceFill([
-            //     'api_token' => hash('sha256', $token),
-            // ])->save();
-            $admin = Charity::select('_charities.*')->find(auth()->guard('charity')->user()->id);
-            $success =  $admin;
-            $success['token'] =  $admin->createToken('MyApp',['charity'])->accessToken; 
-
-            return response()->json($this->sendResponse($status=true,$message="User Logged successfully", $data=$success));
-        }else{ 
-            return response()->json($this->sendResponse($status=false,$message="Email or Password are Wrong.", $data=""));
+        if (Charity::where('email', request('email'))->doesntExist()) {
+            return response()->json($this->sendResponse($status = false, $message = "المستخدم غير موجود", $data = null));
         }
+        if (auth()->guard('charity')->attempt(['email' => request('email'), 'password' => request('password')])) {
+            $user = Charity::select('_charities.*')->find(auth()->guard('charity')->user()->id);
+            $user['token'] =  $user->createToken('MyApp', ['charity'])->accessToken;
+            return response()->json($this->sendResponse($status = true, $message = "تم تسجيل الدخول بنجاح", $data = $user));
+        } else {
+            return response()->json($this->sendResponse($status = false, $message = "البريد الالكتروني أو كلمة المرور غير صحيحة", $data = null));
+        }
+
     }
 
 
     //register
     public function register(Request $request) 
     { 
-        $validator = Validator::make($request->all(), [ 
-            'name' => 'required', 
-            'email' => 'required|email', 
-            'password' => [
-                'required',
-                'string',
-                'min:8',             // must be at least 8 characters in length
-                'regex:/[a-z]/',      // must contain at least one lowercase letter
-                'regex:/[A-Z]/',      // must contain at least one uppercase letter
-                'regex:/[0-9]/',      // must contain at least one digit
-                'regex:/[@$!%*#?&]/', // must contain a special character
-            ], 
-            'c_password' => 'required|same:password',
-            'open_time' => 'required', 
-            'about' => 'required',
-            'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10',
-            'address' => 'required',
-            'image' => 'image',
-            'activation_status' => 'required'
-        ]);
+        // $validator = Validator::make($request->all(), [ 
+        //     'name' => 'required', 
+        //     'email' => 'required|email', 
+        //     'password' => [
+        //         'required',
+        //         'string',
+        //         'min:8',             // must be at least 8 characters in length
+        //         'regex:/[a-z]/',      // must contain at least one lowercase letter
+        //         'regex:/[A-Z]/',      // must contain at least one uppercase letter
+        //         'regex:/[0-9]/',      // must contain at least one digit
+        //         'regex:/[@$!%*#?&]/', // must contain a special character
+        //     ], 
+        //     'c_password' => 'required|same:password',
+        //     'open_time' => 'required', 
+        //     'about' => 'required',
+        //     'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:10',
+        //     'address' => 'required',
+        //     'image' => 'image',
+        //     'activation_status' => 'required'
+        // ]);
 
-        if ($validator->fails()) { 
-            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
+        // if ($validator->fails()) { 
+        //     return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
+        // }
+
+        if (Charity::where('email', request('email'))->doesntExist()) {
+            $success = false;
+            $obj = parent::saveModel($request, Charity::class, true);
+            if ($obj) {
+                $success = true;
+            } else {
+                $success = false;
+            }
+            return response()->json($this->sendResponse($status = $success, $message = (($success) ? "تم التسجيل بنجاح" : "فشل التسجيل"), $data = (($success) ? $obj : null)));
         }
-
-    
-        $data = $request->all();
-        $data['password'] =  bcrypt($request['password']);
-        $charity = Charity::create($data);
-
-        $success = $charity->save();
-
-        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$charity)); 
+        return response()->json($this->sendResponse($status = false, $message = "البريد الالكتروني مستخدم بالفعل", $data = null));
     }
 
+
+    public function storeFCMToken(Request $request)
+    {
+        $charities = Charity::select('*')->where('fcm_token', $request['fcm'])->get();
+        foreach ($charities as $charity) {
+            $charity->fcm_token = null;
+            $charity->save();
+        }
+
+        $charity = charity::find($request['user_id']);
+        $charity->fcm_token = $request['fcm'];
+        $success = $charity->save();
+        return response()->json($this->sendResponse($status = $success, $message = (($success) ? "تم اضافة التوكن بنجاح" : "فشل اضافة التوكن"), $data = (($success) ? $donor : null)));
+    }
+    
     public function forgotPassword(Request $request){ 
 
         $validator = Validator::make($request->all(), [
@@ -99,6 +115,7 @@ class CharityUserController extends Controller
         if($validator->fails()){
             return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));
         }
+
          $email = $request['email'];
         if(Charity::where('email',$email)->doesntExist()){
             return response()->json($this->sendResponse($status=false,$message="User doesn\'t exists!", $data=""));
@@ -115,7 +132,7 @@ class CharityUserController extends Controller
             'body' => $token 
         ];
         Mail::to($email)->send(new ForgotPasswordMail($details));
-        return response()->json($this->sendResponse($status=true,$message="Check Your Email!!", $data=""));
+            return response()->json($this->sendResponse($status = true, $message = "تم إرسال رمز التحقق إلى بريدك الالكتروني", $data = ""));
         }catch (\Exception $e){
             return response()->json($this->sendResponse($status=false,$message=$e, $data=""));
         }
@@ -135,27 +152,55 @@ class CharityUserController extends Controller
         }
 
         $token = $request['token'];
-        if(!$passwordReset = DB::table('password_resets')->where('token',$token)->first()){
-            return response()->json($this->sendResponse($status=false,$message="Invalid Token", $data=""));
+        if (!$passwordReset = DB::table('password_resets')->where('token', $token)->first()) {
+            return response()->json($this->sendResponse($status = false, $message = "كود التحقق غير صحيح", $data = null));
         }
-        if(!$user = Charity::where('email',$passwordReset->email)->first()){
-            return response()->json($this->sendResponse($status=false,$message="User doesn\'t exists!", $data=""));
+        if (!$user = Donor::where('email', $passwordReset->email)->first()) {
+            return response()->json($this->sendResponse($status = false, $message = "المستخدم غير موجود", $data = null));
         }
 
         $user->password = Hash::make($request['password']);
         $result = $user->save();
+        if($result){
+                DB::table('password_resets')->where('token', $token)->delete();
+        }
+        return response()->json($this->sendResponse($status = $result, $message = (($result ? "تم إعادة تعيين كلمة المرور بنجاح" : "فشل إعادة تعيين كلمة المرور")), $data = (($result ? $user : null))));
+    }
 
-        return response()->json($this->sendResponse($status=$result,$message=(($result?"Password reset successfully":"Failed")), $data=""));
+
+    public function setNewAccountPassword(Request $request){ 
+
+        $validator = Validator::make($request->all(), [
+            'password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+        ]);
+
+        if($validator->fails()){
+            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
+        }
+
+        $user = auth()->guard('charity-api')->user();
+        if(!Hash::check($request['password'], $user->password)){
+            return response()->json($this->sendResponse($status = false, $message = "كلمة المرور غير صحيحة", $data = null));
+        }
+
+        $user->password = Hash::make($request['new_password']);
+        $status = $user->save();
+        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "تم تغيير كلمة المرور بنجاح" : "فشل تغيير كلمة المرور"), $data = (($status) ? $user : null)));
+
     }
 
 
     public function logout () {
-        try{
-            $token = auth()->guard('charity-api')->user()->token();
+        try {
+            $user = auth()->guard('charity-api')->user();
+            $token = $user->token();
             $token->revoke();
-            return response()->json($this->sendResponse($status=true,"You have been successfully logged out!", $data=""));
-        }catch (Exception $e){
-            return response()->json($this->sendResponse($status=false,$message=$e, $data=""));
+            $user->fcm_token = null;
+            $user->save();
+            return response()->json($this->sendResponse($status = true, "تم تسجيل الخروج بنجاح", $data = ""));
+        } catch (\Exception $e) {
+            return response()->json($this->sendResponse($status = false, $message = $e, $data = ""));
         }
        
     }
@@ -251,27 +296,6 @@ class CharityUserController extends Controller
         return response()->json($this->sendResponse($status=$success,$message=(($success)?"Campaign deleted successfully":"failed"), $data=""));
     }
 
-    public function setNewAccountPassword(Request $request){ 
-
-        $validator = Validator::make($request->all(), [
-            'password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
-        ]);
-
-        if($validator->fails()){
-            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
-        }
-
-        $user = auth()->guard('charity-api')->user();
-        if(!Hash::check($request['password'], $user->password)){
-            return response()->json($this->sendResponse($status=false,$message="Invalid Password", $data=""));            
-        }
-
-        $user->password = Hash::make($request['new_password']);
-        $status = $user->save();
-        return response()->json($this->sendResponse($status=$status,$message=(($status)?"Password successfully updated":"failed"), $data=""));
-
-    }
 
     public function setDonationAcceptance (Request $request){
         $validator = Validator::make($request->all(), [ 
@@ -316,7 +340,7 @@ class CharityUserController extends Controller
 
    
     public function getComplaints(){
-        $list = Complaint::where('complainer_type','Donor')->get(); 
+        $list = Complaint::with('donor')->where('complainer_type','Donor')->get(); 
         return response()->json($this->sendResponse($status=true,$message="", $data=$list)); 
     }
 

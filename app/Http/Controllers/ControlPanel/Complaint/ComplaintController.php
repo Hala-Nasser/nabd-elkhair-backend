@@ -20,7 +20,7 @@ class ComplaintController extends Controller
         foreach ($complaints as $complaint) {
             if ($complaint->complainer_type == "charity"){
                 $charity = Charity::find($complaint->complainer_id);
-                $complaint->complainer_name = $charity->name;
+                $complaint->complainer_name = $charity->name??null;
                 $donor = Donor::find($complaint->defendant_id);
                 if($donor){
                     $complaint->defendant_name = $donor->name;
@@ -28,9 +28,7 @@ class ComplaintController extends Controller
                 
             }else{
                 $donor = Donor::find($complaint->complainer_id);
-                if($donor){
-                    $complaint->complainer_name = $donor->name;
-                }  
+                $complaint->complainer_name = $donor->name??null;
                 $charity = Charity::find($complaint->defendant_id);
                 $complaint->defendant_name = $charity->name;
             }
