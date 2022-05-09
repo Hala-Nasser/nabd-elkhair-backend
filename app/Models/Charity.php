@@ -36,6 +36,10 @@ class Charity extends Authenticatable
         'open_time'
     ];
 
+    protected $casts = [
+        'donationTypes' => 'array'
+    ];
+    
     /**
      * The attributes that should be hidden for arrays.
      *
