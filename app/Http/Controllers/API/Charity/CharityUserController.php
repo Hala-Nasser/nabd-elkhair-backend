@@ -81,6 +81,7 @@ class CharityUserController extends Controller
         if (Charity::where('email', request('email'))->doesntExist()) {
             $success = false;
             $obj = parent::saveModel($request, Charity::class, true);
+            
             if ($obj) {
                 $success = true;
             } else {
@@ -103,7 +104,18 @@ class CharityUserController extends Controller
         $charity = charity::find($request['user_id']);
         $charity->fcm_token = $request['fcm'];
         $success = $charity->save();
-        return response()->json($this->sendResponse($status = $success, $message = (($success) ? "تم اضافة التوكن بنجاح" : "فشل اضافة التوكن"), $data = (($success) ? $donor : null)));
+        return response()->json($this->sendResponse($status = $success, $message = (($success) ? "تم اضافة التوكن بنجاح" : "فشل اضافة التوكن"), $data = (($success) ? $charity : null)));
+    }
+
+    public function getCharityDonationTypes($id){
+        $list = [];
+         $charity = Charity::find($id);
+        foreach($charity->donationTypes as $types){
+            $type = DonationType::find($types);
+            $list[] = $type;
+        }
+
+        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
     
     public function forgotPassword(Request $request){ 

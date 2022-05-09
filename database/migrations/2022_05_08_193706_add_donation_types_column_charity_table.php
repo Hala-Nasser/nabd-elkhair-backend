@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDefendantNameColumn extends Migration
+class AddDonationTypesColumnCharityTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddDefendantNameColumn extends Migration
      */
     public function up()
     {
-        Schema::table('complaints', function($table) {
-            $table->string('defendant_name');
+        Schema::table('_charities', function($table) {
+            $table->json('donationTypes');
         });
     }
 

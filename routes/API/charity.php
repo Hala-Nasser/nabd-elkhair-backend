@@ -16,8 +16,12 @@ use App\Http\Controllers\API\Charity\CharityUserController;
 
 Route::post('charity/register', [CharityUserController::class,'register']);
 Route::post('charity/login',[CharityUserController::class, 'login']);
+Route::post('charity/store/fcm', [CharityUserController::class,'storeFCMToken']);
 Route::post('charity/forgotPassword',[CharityUserController::class, 'forgotPassword']);
 Route::post('charity/resetPassword',[CharityUserController::class, 'resetPassword']);
+Route::get('charity/getCampaigns', [CharityUserController::class,'getCampaigns']);
+Route::get('charity/getDonationTypes', [CharityUserController::class,'getDonationTypes']);
+Route::get('charity/getCharityDonationTypes/{id}', [CharityUserController::class,'getCharityDonationTypes']);
 
 Route::group( ['prefix' => 'charity','middleware' => ['auth:charity-api','scopes:charity'] ],function(){
     // authenticated staff routes here 
@@ -30,11 +34,9 @@ Route::group( ['prefix' => 'charity','middleware' => ['auth:charity-api','scopes
         Route::post('updateProfile',[CharityUserController::class, 'updateProfile']);
         Route::post('updateCampaign',[CharityUserController::class, 'updateCampaign']);
 
-        Route::get('getDonationTypes', [CharityUserController::class,'getDonationTypes']);
         Route::get('getPaymentLinks', [CharityUserController::class,'getPaymentLinks']);
         Route::get('getCharity', [CharityUserController::class,'getCharity']);
         Route::get('getComplaints', [CharityUserController::class,'getComplaints']);
-        Route::get('getCampaigns', [CharityUserController::class,'getCampaigns']);
         Route::get('getDonations', [CharityUserController::class,'getDonations']);
         Route::get('logout',[CharityUserController::class, 'logout']);
 
