@@ -67,4 +67,38 @@ class Controller extends BaseController
 
         return $image_name;
     }
+
+    public function sendNotification($title, $body, $model)
+    {
+
+        $SERVER_API_KEY = 'AAAAicpoaxc:APA91bHeJOgxSWWShrTXKNbJktNGj3l4zKuM7b5rkO40Tsf7n0MGOKHXX-2kXTzvAm2CSUjfloo98v9zH1Y8g5aRlfjRNDDrC1oet79cbn1o3Nwbc8LcGETk29vzCNoRfC6RZo_f7Kic';
+
+        $recievers = $model::select('*')->whereNotNull('fcm_token')->get();
+
+        foreach ($recievers as $r) {
+            $token = $r->fcm_token;
+            $data = [
+                "registration_ids" => [
+                    $token
+                ],
+                "notification" => [
+                    "title" => $title,
+                    "body" => $body,
+                ],
+            ];
+            $dataString = json_encode($data);
+            $headers = [
+                'Authorization: key=' . $SERVER_API_KEY,
+                'Content-Type: application/json',
+            ];
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+            $response = curl_exec($ch);
+        }
+    }
 }

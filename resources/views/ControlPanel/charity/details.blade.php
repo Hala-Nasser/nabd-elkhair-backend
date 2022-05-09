@@ -97,6 +97,8 @@
           </div>
         </div>
 
+        @if($charity->payment_links != null && !empty($charity->payment_links))
+        
         @if ($charity->payment_links->paypal_link != null)
         <div class="form-group">
           <label for="exampleSelectBorder">رابط الباي بال</label>
@@ -113,12 +115,14 @@
         </div>
         @endif
 
+        
         @if ($charity->payment_links->creditcard_link != null)
         <div class="form-group">
           <label for="exampleSelectBorder">رابط الكريديت كارد</label>
           <input type="url" class="form-control" placeholder="Enter credit card link" name="credit"
             value="{{ $charity->payment_links->creditcard_link}}" style="pointer-events: none;">
         </div>
+        @endif
         @endif
 
 

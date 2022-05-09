@@ -110,7 +110,7 @@ class DonorController extends Controller
         $user->password = Hash::make($request['password']);
         $result = $user->save();
         if($result){
-                DB::table('password_resets')->where('token', $token)->delete();
+            DB::table('password_resets')->where('token', $token)->delete();
         }
         return response()->json($this->sendResponse($status = $result, $message = (($result ? "تم إعادة تعيين كلمة المرور بنجاح" : "فشل إعادة تعيين كلمة المرور")), $data = (($result ? $user : null))));
     }
@@ -169,8 +169,12 @@ class DonorController extends Controller
 
     public function CampaignsAccordingToDonationType($donation_type){
         $campaigns = Campaign::select('*')->where('donation_type_id', $donation_type)->get();
+        if($donation_type == 0){
+            $campaigns = Campaign::select('*')->get();
+        }
         foreach($campaigns as $campaign){
             $campaign->charity = Charity::find($campaign->charity_id);
+            $campaign->donation_type = DonationType::find($campaign->donation_type_id);
         }
         
         return response()->json($this->sendResponse($status = true, $message = "تم جلب الحملات بنجاح", $data = $campaigns));
