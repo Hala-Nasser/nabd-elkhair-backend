@@ -263,7 +263,7 @@ class CharityUserController extends Controller
         if($success){
             $notification_content = ' تم إضافة حملة ' . $response->name;
             //send notification
-            $this->sendNotification('حملة جديدة', $notification_content, Donor::class);
+            $this->sendNotification('حملة جديدة', $notification_content, Donor::class, $response->image, "donor");
         }
 
         return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=(($success)?$response:null))); 

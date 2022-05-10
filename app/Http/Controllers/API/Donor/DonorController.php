@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Mail\ForgotPasswordMail;
 use App\Models\Campaign;
 use App\Models\DonationType;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
@@ -109,7 +110,7 @@ class DonorController extends Controller
 
         $user->password = Hash::make($request['password']);
         $result = $user->save();
-        if($result){
+        if ($result) {
             DB::table('password_resets')->where('token', $token)->delete();
         }
         return response()->json($this->sendResponse($status = $result, $message = (($result ? "تم إعادة تعيين كلمة المرور بنجاح" : "فشل إعادة تعيين كلمة المرور")), $data = (($result ? $user : null))));
@@ -167,53 +168,58 @@ class DonorController extends Controller
         return response()->json($this->sendResponse($status = $status, $message = (($status) ? "success" : "failed"), $data = $response));
     }
 
-    public function CampaignsAccordingToDonationType($donation_type){
+    public function CampaignsAccordingToDonationType($donation_type)
+    {
         $campaigns = Campaign::select('*')->where('donation_type_id', $donation_type)->get();
-        if($donation_type == 0){
+        if ($donation_type == 0) {
             $campaigns = Campaign::select('*')->get();
         }
-        foreach($campaigns as $campaign){
+        foreach ($campaigns as $campaign) {
             $campaign->charity = Charity::find($campaign->charity_id);
             $campaign->donation_type = DonationType::find($campaign->donation_type_id);
         }
-        
+
         return response()->json($this->sendResponse($status = true, $message = "تم جلب الحملات بنجاح", $data = $campaigns));
     }
 
-    public function CampaignsAccordingToCharity($charity){
+    public function CampaignsAccordingToCharity($charity)
+    {
         $campaigns = Campaign::select('*')->where('charity_id', $charity)->get();
         return response()->json($this->sendResponse($status = true, $message = "تم جلب الحملات بنجاح", $data = $campaigns));
     }
 
-    public function charities(){
+    public function charities()
+    {
         $charities = Charity::select('*')->where('activation_status', 1)->get();
         return response()->json($this->sendResponse($status = true, $message = "تم جلب الجمعيات بنجاح", $data = $charities));
     }
 
-    public function charitySearch($keyword){
+    public function charitySearch($keyword)
+    {
         $charities = Charity::where('name', 'LIKE', '%' . $keyword . '%')->get();
         return response()->json($this->sendResponse($status = true, $message = "تم جلب الجمعيات المشابهة بنجاح", $data = $charities));
-
     }
 
-    public function profile($id){
+    public function profile($id)
+    {
         $donor = Donor::find($id);
 
         $capmaign_donations_count = count(Donation::select('*')->where('donor_id', $id)->where('received', 1)->whereNotNull('campaign_id')->get());
         $charity_donations_count = count(Donation::select('*')->where('donor_id', $id)->where('received', 1)->whereNull('campaign_id')->get());
-        $donor -> capmaign_donations_count = $capmaign_donations_count;
-        $donor -> charity_donations_count = $charity_donations_count;
+        $donor->capmaign_donations_count = $capmaign_donations_count;
+        $donor->charity_donations_count = $charity_donations_count;
 
         return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $donor));
     }
 
-    public function myDonation($id){
+    public function myDonation($id)
+    {
         $donations = Donation::select('*')->where('donor_id', $id)->where('received', 1)->get();
 
-        foreach($donations as $donation){
-            if(is_null($donation -> campaign_id)){
+        foreach ($donations as $donation) {
+            if (is_null($donation->campaign_id)) {
                 $donation->charity_details = Charity::find($donation->charity_id);
-            }else{
+            } else {
                 $donation->campaign_details = Campaign::find($donation->campaign_id);
             }
         }
@@ -221,19 +227,19 @@ class DonorController extends Controller
         return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $donations));
     }
 
-    public function updateProfile(Request $request){
+    public function updateProfile(Request $request)
+    {
         $donor = Donor::find($request['id']);
 
         $obj = parent::saveModel($request, Donor::class, true);
 
-        return response()->json($this->sendResponse($status = $obj, $message = (($obj) ? "تم تعديل الملف الشخصي بنجاح" : "فشل تعديل الملف الشخصي"), $data = $obj));
-
+        return response()->json($this->sendResponse($status = (($obj) ? true : false), $message = (($obj) ? "تم تعديل الملف الشخصي بنجاح" : "فشل تعديل الملف الشخصي"), $data = (($obj) ? $obj : null)));
     }
 
-    public function getDonationTypes(){
+    public function getDonationTypes()
+    {
         $donation_types = DonationType::select('*')->get();
         return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $donation_types));
-
     }
 
 
@@ -243,4 +249,14 @@ class DonorController extends Controller
         return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $staticPage));
     }
 
+    public function getNotifications($reciever_id)
+    {
+        $notifications = Notification::select('*')->where('reciever_id', $reciever_id)->get();
+        return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $notifications));
+    }
+
+    public function getDonationType($id){
+        $obj = DonationType::find($id);    
+        return response()->json($this->sendResponse($status=true,$message="تم جلب البيانات", $data=$obj));
+    }
 }

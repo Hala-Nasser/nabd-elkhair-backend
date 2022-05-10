@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -68,7 +69,7 @@ class Controller extends BaseController
         return $image_name;
     }
 
-    public function sendNotification($title, $body, $model)
+    public function sendNotification($title, $body, $model, $image, $reciever_type)
     {
 
         $SERVER_API_KEY = 'AAAAicpoaxc:APA91bHeJOgxSWWShrTXKNbJktNGj3l4zKuM7b5rkO40Tsf7n0MGOKHXX-2kXTzvAm2CSUjfloo98v9zH1Y8g5aRlfjRNDDrC1oet79cbn1o3Nwbc8LcGETk29vzCNoRfC6RZo_f7Kic';
@@ -99,6 +100,22 @@ class Controller extends BaseController
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
             $response = curl_exec($ch);
+
+
+            $this->storeNotification($r->id, $reciever_type, $title, $body, $image);
         }
+    }
+
+    public function storeNotification($reciever_id, $reciever_type, $notification_title, $notification_content, $notification_image){
+        $notification = new Notification();
+        $notification->reciever_id = $reciever_id;
+        $notification->reciever_type = $reciever_type;
+        $notification->notification_title = $notification_title;
+        $notification->notification_content = $notification_content;
+        $notification->notification_image = $notification_image;
+
+
+        $result = $notification->save();
+
     }
 }
