@@ -22,6 +22,9 @@ class Complaint extends Model
         'complaint_reason',
     ];
 
+    protected $casts = [
+        'complaint_reason' => 'array'
+    ];
 
     public function donor() {
         return $this->belongsTo('App\Models\Donor','donor_id','complainer_id');
