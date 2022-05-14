@@ -235,7 +235,7 @@ class CharityUserController extends Controller
             $response = Complaint::create($data);
             $status = $response->save();
 
-            return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response)); 
+            return response()->json($this->sendResponse($status=$status,$message=(($status)?"success":"failed"), $data=$response)); 
     }
 
     public function addCampaign(Request $request) 
