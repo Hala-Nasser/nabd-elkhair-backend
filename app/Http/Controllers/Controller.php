@@ -77,36 +77,37 @@ class Controller extends BaseController
         $recievers = $model::select('*')->whereNotNull('fcm_token')->get();
 
         foreach ($recievers as $r) {
-            $token = $r->fcm_token;
-            $data = [
-                "registration_ids" => [
-                    $token
-                ],
-                "notification" => [
-                    "title" => $title,
-                    "body" => $body,
-                ],
-            ];
-            $dataString = json_encode($data);
-            $headers = [
-                'Authorization: key=' . $SERVER_API_KEY,
-                'Content-Type: application/json',
-            ];
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
-            $response = curl_exec($ch);
-
-
+            if ($r->notification_status == 1) {
+                $token = $r->fcm_token;
+                $data = [
+                    "registration_ids" => [
+                        $token
+                    ],
+                    "notification" => [
+                        "title" => $title,
+                        "body" => $body,
+                    ],
+                ];
+                $dataString = json_encode($data);
+                $headers = [
+                    'Authorization: key=' . $SERVER_API_KEY,
+                    'Content-Type: application/json',
+                ];
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+                $response = curl_exec($ch);
+            }
             $this->storeNotification($r->id, $reciever_type, $title, $body, $image);
         }
     }
 
-    public function storeNotification($reciever_id, $reciever_type, $notification_title, $notification_content, $notification_image){
+    public function storeNotification($reciever_id, $reciever_type, $notification_title, $notification_content, $notification_image)
+    {
         $notification = new Notification();
         $notification->reciever_id = $reciever_id;
         $notification->reciever_type = $reciever_type;
@@ -116,6 +117,21 @@ class Controller extends BaseController
 
 
         $result = $notification->save();
+    }
 
+    // public function storeNoti(Request $request)
+    // {
+    //     $noti = $this->saveModel($request, Notification::class, true);
+
+    //     return response()->json($this->sendResponse($status = (($noti) ? true : false), $message = (($noti) ? "تم تخزين الاشعار بنجاح" : "فشل التخزين"), $data = (($noti) ? $noti : null)));
+    // }
+
+
+
+    function console_log($data)
+    {
+        echo '<script>';
+        echo 'console.log(' . json_encode($data) . ')';
+        echo '</script>';
     }
 }

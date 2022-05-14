@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Donor\DonorController;
+use App\Http\Controllers\Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,7 +31,11 @@ Route::get('donor/donationtype', [DonorController::class, 'getDonationTypes']);
 Route::get('donor/static/{id}', [DonorController::class, 'getStaticPages']);
 Route::get('donor/notifications/{reciever_id}', [DonorController::class, 'getNotifications']);
 Route::get('donor/donationtype/{id}', [DonorController::class, 'getDonationType']);
+Route::get('donor/paymentLink/{charity_id}', [DonorController::class, 'getPaymentLink']);
+Route::post('donor/enable/{id}', [DonorController::class, 'enableNotification']);
+Route::post('donor/disable/{id}', [DonorController::class, 'disableNotification']);
 
+// Route::post('donor/store/notification', [Controller::class, 'storeNoti']);
 
 Route::group( ['prefix' => 'donor','middleware' => ['auth:donor-api','scopes:donor'] ],function(){
     // authenticated staff routes here 

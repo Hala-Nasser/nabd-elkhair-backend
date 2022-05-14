@@ -13,6 +13,7 @@ use App\Mail\ForgotPasswordMail;
 use App\Models\Campaign;
 use App\Models\DonationType;
 use App\Models\Notification;
+use App\Models\PaymentLink;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
@@ -41,8 +42,7 @@ class DonorController extends Controller
     //register
     public function register(Request $request)
     {
-        //المفترض افحص انو الايميل مش موجود برضو بالجمعية
-        if (Donor::where('email', request('email'))->doesntExist()) {
+        if (Donor::where('email', request('email'))->doesntExist() && Charity::where('email', request('email'))->doesntExist()) {
             $success = false;
             $obj = parent::saveModel($request, Donor::class, true);
             if ($obj) {
@@ -153,6 +153,16 @@ class DonorController extends Controller
         $response = Complaint::create($data);
         $status = $response->save();
 
+        if ($status) {
+            $complaints = Complaint::select('*')->where('defendant_id', $request['defendant_id'])->where('complainer_type', $request['complainer_type'])->get();
+            if (count($complaints) >= 3) {
+                $charity = Charity::find($request['defendant_id']);
+                $charity->activation_status = 0;
+                $result = $charity->save();
+                return response()->json($this->sendResponse($status = true, $message = "أصبح عدد الشكاوي 3 فأكثر، سيتم تعطيل حساب المشتكى عليه", $data = null));
+            }
+        }
+
         return response()->json($this->sendResponse($status = $status, $message = (($status) ? "success" : "failed"), $data = $response));
     }
 
@@ -170,21 +180,45 @@ class DonorController extends Controller
 
     public function CampaignsAccordingToDonationType($donation_type)
     {
+        $charities = Charity::select('id')->where('activation_status', 1)->get();
+        $active_campaings = [];
         $campaigns = Campaign::select('*')->where('donation_type_id', $donation_type)->get();
         if ($donation_type == 0) {
             $campaigns = Campaign::select('*')->get();
         }
+
         foreach ($campaigns as $campaign) {
-            $campaign->charity = Charity::find($campaign->charity_id);
-            $campaign->donation_type = DonationType::find($campaign->donation_type_id);
+            if ($charities->contains($campaign->charity_id)) {
+                $donation_type_list = [];
+                $campaign->charity = Charity::find($campaign->charity_id);
+                $donation_type_obj = DonationType::find($campaign->donation_type_id);
+                if ($donation_type_obj->name != "مال") {
+                    array_push($donation_type_list, DonationType::select('*')->where('name', "مال")->first());
+                }
+                array_push($donation_type_list, $donation_type_obj);
+                $campaign->donation_type = $donation_type_list;
+                array_push($active_campaings, $campaign);
+            }
         }
 
-        return response()->json($this->sendResponse($status = true, $message = "تم جلب الحملات بنجاح", $data = $campaigns));
+        return response()->json($this->sendResponse($status = true, $message = "تم جلب الحملات بنجاح", $data = $active_campaings));
     }
 
     public function CampaignsAccordingToCharity($charity)
     {
         $campaigns = Campaign::select('*')->where('charity_id', $charity)->get();
+
+        foreach ($campaigns as $campaign) {
+            $donation_type_list = [];
+            $campaign->charity = Charity::find($campaign->charity_id);
+            $donation_type_obj = DonationType::find($campaign->donation_type_id);
+            if ($donation_type_obj->name != "مال") {
+                //$donation_type_obj = DonationType::find('name', "مال");
+                array_push($donation_type_list, DonationType::select('*')->where('name', "مال")->first());
+            }
+            array_push($donation_type_list, $donation_type_obj);
+            $campaign->donation_type = $donation_type_list;
+        }
         return response()->json($this->sendResponse($status = true, $message = "تم جلب الحملات بنجاح", $data = $campaigns));
     }
 
@@ -251,12 +285,36 @@ class DonorController extends Controller
 
     public function getNotifications($reciever_id)
     {
-        $notifications = Notification::select('*')->where('reciever_id', $reciever_id)->get();
+        $notifications = Notification::select('*')->where('reciever_id', $reciever_id)->orderBy('created_at', 'desc')->get();
         return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $notifications));
     }
 
-    public function getDonationType($id){
-        $obj = DonationType::find($id);    
-        return response()->json($this->sendResponse($status=true,$message="تم جلب البيانات", $data=$obj));
+    public function getDonationType($id)
+    {
+        $obj = DonationType::find($id);
+        return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات", $data = $obj));
     }
+
+    public function getPaymentLink($charity_id)
+    {
+        $payment = PaymentLink::select('*')->where('charity_id', $charity_id)->first();
+        return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات", $data = $payment));
+    }
+
+    public function enableNotification($id){
+        $donor = Donor::find($id);
+        $donor->notification_status = 1;
+        $result = $donor->save();
+        return response()->json($this->sendResponse($status = $result, $message = (($result)? "تم تفيعل الاشعارات بنجاح":"فشل تفعيل الاشعارات"), $data = (($result)? $donor:null)));
+
+    }
+
+    public function disableNotification($id){
+        $donor = Donor::find($id);
+        $donor->notification_status = 0;
+        $result = $donor->save();
+        return response()->json($this->sendResponse($status = $result, $message = (($result)? "تم تعطيل الاشعارات بنجاح":"فشل تعطيل الاشعارات"), $data = (($result)? $donor:null)));
+
+    }
+
 }
