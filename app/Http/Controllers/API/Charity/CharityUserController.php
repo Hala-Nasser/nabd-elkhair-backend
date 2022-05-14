@@ -146,7 +146,7 @@ class CharityUserController extends Controller
         Mail::to($email)->send(new ForgotPasswordMail($details));
             return response()->json($this->sendResponse($status = true, $message = "تم إرسال رمز التحقق إلى بريدك الالكتروني", $data = ""));
         }catch (\Exception $e){
-            return response()->json($this->sendResponse($status=false,$message=$e, $data=""));
+            return response()->json($this->sendResponse($status=false,$message="هناك خلل في الاتصال بالانترنت", $data=""));
         }
         
                 
@@ -167,7 +167,7 @@ class CharityUserController extends Controller
         if (!$passwordReset = DB::table('password_resets')->where('token', $token)->first()) {
             return response()->json($this->sendResponse($status = false, $message = "كود التحقق غير صحيح", $data = null));
         }
-        if (!$user = Donor::where('email', $passwordReset->email)->first()) {
+        if (!$user = Charity::where('email', $passwordReset->email)->first()) {
             return response()->json($this->sendResponse($status = false, $message = "المستخدم غير موجود", $data = null));
         }
 
@@ -272,20 +272,11 @@ class CharityUserController extends Controller
 
     public function updateProfile(Request $request){
 
-        $charity = Charity::where('id',auth()->guard('charity-api')->user()->id)->first();
+        //$charity = Charity::where('id',auth()->guard('charity-api')->user()->id)->first();
+        $request['id'] = auth()->guard('charity-api')->user()->id;
+        $obj = parent::saveModel($request, Charity::class, true);
 
-        $charity->name = $request['name'];
-        $charity->email = $request['email'];
-        $charity->phone = $request['phone'];
-        $charity->address = $request['address'];
-        $charity->image = $request['image'];
-        $charity->activation_status = $request['activation_status'];
-        $charity->about = $request['about'];
-        $charity->open_time = $request['open_time'];
-
-        $status = $charity->save();
-
-        return response()->json($this->sendResponse($status=$success,$message=(($success)?"Profile updated successfully":"failed"), $data=$charity));
+        return response()->json($this->sendResponse($status = (($obj) ? true : false), $message = (($obj) ? "تم تعديل الملف الشخصي بنجاح" : "فشل تعديل الملف الشخصي"), $data = (($obj) ? $obj : null)));
     }
 
     public function updateCampaign (Request $request){
@@ -346,14 +337,20 @@ class CharityUserController extends Controller
     }
 
     public function addPaymentLinks(Request $request) { 
-            $data = $request->all();
-            $data['charity_id'] = auth()->guard('charity-api')->user()->id;
-            $response = PaymentLink::create($data);
+        $obj = parent::saveModel($request, PaymentLink::class, true);
+            
+        if ($obj) {
+            $success = true;
+        } else {
+            $success = false;
+        }
+        return response()->json($this->sendResponse($status = $success, $message = (($success) ? "تم إضافة بيانات الدفع الخاصة بك" : "فشلت الإضافة"), $data = (($success) ? $obj : null)));
+    }
 
-            $status = $response->save();
+    public function updatePaymentLinks(Request $request) { 
+        $obj = parent::saveModel($request, PaymentLink::class, true);
 
-        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response)); 
-          
+        return response()->json($this->sendResponse($status = (($obj) ? true : false), $message = (($obj) ? "تم تعديل بيانات الدفع الخاصة بك" : "فشل تعديل بيانات الدفع"), $data = (($obj) ? $obj : null)));
     }
 
    
@@ -368,7 +365,7 @@ class CharityUserController extends Controller
     }
 
     public function getPaymentLinks(){
-        $list = PaymentLink::all();    
+        $list = PaymentLink::where('charity_id',auth()->guard('charity-api')->user()->id)->first();    
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
 
@@ -378,7 +375,7 @@ class CharityUserController extends Controller
     }
 
     public function getCharity(){
-        $list = Charity::where('id',auth()->guard('charity-api')->user()->id)->get();    
+        $list = Charity::where('id',auth()->guard('charity-api')->user()->id)->first();    
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
 
