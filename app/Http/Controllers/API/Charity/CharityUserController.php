@@ -235,7 +235,7 @@ class CharityUserController extends Controller
             $response = Complaint::create($data);
             $status = $response->save();
 
-            return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response)); 
+            return response()->json($this->sendResponse($status=$status,$message=(($status)?"success":"failed"), $data=$response)); 
     }
 
     public function addCampaign(Request $request) 
@@ -260,7 +260,13 @@ class CharityUserController extends Controller
 
         $success = $response->save();
 
-        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=$response)); 
+        if($success){
+            $notification_content = ' تم إضافة حملة ' . $response->name;
+            //send notification
+            $this->sendNotification('حملة جديدة', $notification_content, Donor::class, $response->image, "donor");
+        }
+
+        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=(($success)?$response:null))); 
         
     }
 
@@ -358,7 +364,7 @@ class CharityUserController extends Controller
 
     public function getDonationTypes(){
         $list = DonationType::all();    
-        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+        return response()->json($this->sendResponse($status=true,$message="تم جلب البيانات", $data=$list));
     }
 
     public function getPaymentLinks(){

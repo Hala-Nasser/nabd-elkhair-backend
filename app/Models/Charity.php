@@ -33,7 +33,8 @@ class Charity extends Authenticatable
         'image',
         'activation_status',
         'about',
-        'open_time'
+        'open_time',
+        'first_activiation'
     ];
 
     protected $casts = [

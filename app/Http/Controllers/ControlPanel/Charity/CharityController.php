@@ -42,7 +42,7 @@ class CharityController extends Controller
 
             $notification_content = ' تم إضافة جمعية ' . $charity->name;
             //send notification
-            $this->sendNotification('جمعية جديدة', $notification_content);
+            $this->sendNotification('جمعية جديدة', $notification_content, Donor::class, $charity->image, "donor");
         }
 
         if ($result) {
@@ -77,37 +77,5 @@ class CharityController extends Controller
     }
 
 
-    public function sendNotification($title, $body)
-    {
-
-        $SERVER_API_KEY = 'AAAAicpoaxc:APA91bHeJOgxSWWShrTXKNbJktNGj3l4zKuM7b5rkO40Tsf7n0MGOKHXX-2kXTzvAm2CSUjfloo98v9zH1Y8g5aRlfjRNDDrC1oet79cbn1o3Nwbc8LcGETk29vzCNoRfC6RZo_f7Kic';
-
-        $donors = Donor::select('*')->whereNotNull('fcm_token')->get();
-
-        foreach ($donors as $d) {
-            $token = $d->fcm_token;
-            $data = [
-                "registration_ids" => [
-                    $token
-                ],
-                "notification" => [
-                    "title" => $title,
-                    "body" => $body,
-                ],
-            ];
-            $dataString = json_encode($data);
-            $headers = [
-                'Authorization: key=' . $SERVER_API_KEY,
-                'Content-Type: application/json',
-            ];
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
-            $response = curl_exec($ch);
-        }
-    }
+   
 }
