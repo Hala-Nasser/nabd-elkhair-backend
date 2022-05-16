@@ -240,34 +240,32 @@ class CharityUserController extends Controller
 
     public function addCampaign(Request $request) 
     { 
-            $validator = Validator::make($request->all(), [ 
-            'name' => 'required',
-            'description' => 'required',
-            'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg',
-            'expiry_date' => 'required',
-            'expiry_time' => 'required',
-            'donation_type_id' => 'required',
-        ]);
+        //     $validator = Validator::make($request->all(), [ 
+        //     'name' => 'required',
+        //     'description' => 'required',
+        //     'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg',
+        //     'expiry_date' => 'required',
+        //     'expiry_time' => 'required',
+        //     'donation_type_id' => 'required',
+        // ]);
 
-        if ($validator->fails()) { 
-            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
-        }
+        // if ($validator->fails()) { 
+        //     return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
+        // }
 
-    
-        $data = $request->all();
-        $data['charity_id'] = auth()->guard('charity-api')->user()->id;
-        $response = Campaign::create($data);
+        $request['charity_id'] = auth()->guard('charity-api')->user()->id;
+        $obj = parent::saveModel($request, Campaign::class, true);
 
-        $success = $response->save();
-
-        if($success){
-            $notification_content = ' تم إضافة حملة ' . $response->name;
+        if($obj){
+            $status = true;
+            $notification_content = ' تم إضافة حملة ' . $obj->name;
             //send notification
-            $this->sendNotification('حملة جديدة', $notification_content, Donor::class, $response->image, "donor");
+            $this->sendNotification('حملة جديدة', $notification_content, Donor::class, $obj->image, "donor");
+        }else{
+            $status = false;
         }
 
-        return response()->json($this->sendResponse($status=$success,$message=(($success)?"success":"failed"), $data=(($success)?$response:null))); 
-        
+        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "تم إضافة الحملة بنجاح" : "فشل إضافة الحملة"), $data = (($obj) ? $obj : null)));        
     }
 
     public function updateProfile(Request $request){
@@ -318,7 +316,7 @@ class CharityUserController extends Controller
         $donation = Donation::find($request->donation_id);
         $donation->acceptance = $request->acceptance;
         $success = $donation->update();
-        return response()->json($this->sendResponse($status=$success,$message=(($success)?"Donation Acceptace successfully updated":"failed"), $data=""));
+        return response()->json($this->sendResponse($status=$success,$message=(($success)? ($donation->acceptance)? "تم قبول التبرع بنجاح":"تم رفض طلب التبرع":"فشل قبول الطلب"), $data=""));
     }
 
     public function setDonationReceived (Request $request){
@@ -333,7 +331,7 @@ class CharityUserController extends Controller
         $donation = Donation::find($request->donation_id);
         $donation->received = $request->received;
         $success = $donation->update();
-        return response()->json($this->sendResponse($status=$success,$message=(($success)?"Donation Received successfully updated":"failed"), $data=""));
+        return response()->json($this->sendResponse($status=$success,$message=(($success)? ($donation->received)? "تم تأكيد الإستلام بنجاح":"تم رفض طلب الإستلام":"فشل تأكيد الإستلام"), $data=""));
     }
 
     public function addPaymentLinks(Request $request) { 
@@ -382,10 +380,49 @@ class CharityUserController extends Controller
     public function getDonations(){
         $list = Donation::with('donor')->with('campaign')
         ->get(); 
+        // $capmaign_donations_count = count(Donation::select('*')->where('charity_id', $id)->where('received', 1)->whereNotNull('campaign_id')->get());
+        // $charity_donations_count = count(Donation::select('*')->where('charity_id', $id)->where('received', 1)->whereNull('campaign_id')->get());
+        // $list->capmaign_donations_count = $capmaign_donations_count;
+        // $list->charity_donations_count = $charity_donations_count;
         // $diffInDays = $user->created_at->diffInDays();
         //  $showDiff =  $user->created_at->addDays($diffInDays)->diffInHours().' Hours';
         // echo $showDiff;
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    }
+
+    public function getCampaignDonations(){
+    
+        $id = auth()->guard('charity-api')->user()->id;
+
+        $list = Donation::with('donor')->with('campaign')->where('charity_id', $id)
+        ->where('acceptance', 1)->whereNotNull('campaign_id')->get();
+
+        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    }
+
+
+    public function getWithoutCampaignDonations(){
+
+        $id = auth()->guard('charity-api')->user()->id;
+
+        $list = Donation::with('donor')->where('charity_id', $id)
+        ->where('acceptance', 1)->whereNull('campaign_id')->get();
+        
+        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    }
+
+    public function getNotifications($reciever_id)
+    {
+        $notifications = Notification::select('*')->where('reciever_id', $reciever_id)->orderBy('created_at', 'desc')->get();
+        return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $notifications));
+    }
+
+    public function setNotificationStatus(Request $request){
+        $charity = Charity::find(auth()->guard('charity-api')->user()->id);
+        $charity->notification_status = $request->notification_status;
+        $result = $charity->save();
+        return response()->json($this->sendResponse($status = $result, $message = (($result)? ($charity->notification_status)? "تم تفيعل الاشعارات بنجاح" : "تم تعطيل الاشعارات" :"فشل تفعيل الاشعارات"), $data = ""));
+
     }
     
 }
