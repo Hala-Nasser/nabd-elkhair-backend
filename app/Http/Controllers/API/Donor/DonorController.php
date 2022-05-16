@@ -169,14 +169,27 @@ class DonorController extends Controller
 
     public function addDonation(Request $request)
     {
-        $data = $request->all();
-        $data['donor_id'] = auth()->guard('donor-api')->user()->id;
-        $response = Donation::create($data);
+        $request['donor_id'] = auth()->guard('donor-api')->user()->id;
+        $obj = parent::saveModel($request, Donation::class, true);
+        $donor = Donor::find($request['donor_id']);
+        if($obj){
+            $status = true;
+            if($obj->campaign_id != null){
+                $campaign = Campaign::find($request['campaign_id']);
+             $notification_content = ' قام' . $donor->name . ' بالتبرع لدى حملة '. $campaign->name ;
+             $this->sendNotification('تبرع جديد', $notification_content, Charity::class, $donor->image, "charity");
+            }else{
+                $notification_content =  ' قام'. $donor->name.'بالتبرع لدى الجمعية ';
+                $this->sendNotification('تبرع جديد', $notification_content, Charity::class, $donor->image, "charity");
+            }
+            //send notification
+        }else{
+            $status = false;
+        }
 
-        $status = $response->save();
-
-        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "success" : "failed"), $data = $response));
+        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "تم إضافة التبرع بنجاح" : "فشل إضافة التبرع"), $data = (($obj) ? $obj : null)));        
     }
+
 
     public function CampaignsAccordingToDonationType($donation_type)
     {

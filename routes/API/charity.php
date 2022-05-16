@@ -23,22 +23,26 @@ Route::get('charity/getCampaigns', [CharityUserController::class,'getCampaigns']
 Route::get('charity/getDonationTypes', [CharityUserController::class,'getDonationTypes']); //
 Route::get('charity/getCharityDonationTypes/{id}', [CharityUserController::class,'getCharityDonationTypes']);
 Route::post('charity/addPaymentLinks', [CharityUserController::class,'addPaymentLinks']); //
+Route::get('charity/getNotifications/{id}', [CharityUserController::class,'getNotifications']); //
 
 Route::group( ['prefix' => 'charity','middleware' => ['auth:charity-api','scopes:charity'] ],function(){
     // authenticated staff routes here 
         Route::post('changePassword', [CharityUserController::class,'setNewAccountPassword']); //
         Route::post('addcomplaint', [CharityUserController::class,'addComplaint']);
-        Route::post('addCampaign',[CharityUserController::class, 'addCampaign']);
+        Route::post('addCampaign',[CharityUserController::class, 'addCampaign']); //
         Route::post('setDonationAcceptance', [CharityUserController::class,'setDonationAcceptance']);
         Route::post('setDonationReceived', [CharityUserController::class,'setDonationReceived']);
         Route::post('updateProfile',[CharityUserController::class, 'updateProfile']); //
         Route::post('updateCampaign',[CharityUserController::class, 'updateCampaign']);
+        Route::post('setNotificationStatus', [CharityUserController::class,'setNotificationStatus']); //
 
         Route::get('getPaymentLinks', [CharityUserController::class,'getPaymentLinks']); //
         Route::post('updatePaymentLinks', [CharityUserController::class,'updatePaymentLinks']); //
         Route::get('getCharity', [CharityUserController::class,'getCharity']); //
         Route::get('getComplaints', [CharityUserController::class,'getComplaints']);
         Route::get('getDonations', [CharityUserController::class,'getDonations']);
+        Route::get('getCampaignDonations', [CharityUserController::class,'getCampaignDonations']);
+        Route::get('getWithoutCampaignDonations', [CharityUserController::class,'getWithoutCampaignDonations']);
         Route::get('logout',[CharityUserController::class, 'logout']); //
 
         Route::delete('campaigns/{id}',[CharityUserController::class, 'deleteCampaign']);
