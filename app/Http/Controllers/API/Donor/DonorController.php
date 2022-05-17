@@ -155,7 +155,7 @@ class DonorController extends Controller
 
         if ($status) {
             $complaints = Complaint::select('*')->where('defendant_id', $request['defendant_id'])->where('complainer_type', $request['complainer_type'])->get();
-            if (count($complaints) >= 3) {
+            if (count($complaints) >= 5) {
                 $charity = Charity::find($request['defendant_id']);
                 $charity->activation_status = 0;
                 $result = $charity->save();

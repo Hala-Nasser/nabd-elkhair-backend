@@ -84,7 +84,9 @@
                 <h6 style="font-size:14px;">{{ $complaint->complainer_type }}</h6>
               </td>
               <td style="vertical-align: middle; text-align:center">
-                <h6 style="font-size:14px;">{{ $complaint->complaint_reason }}</h6>
+                @foreach($complaint->complaint_reason as $reason)
+                <h6 style="font-size:14px;">{{ $reason }}</h6>
+                @endforeach
               </td>
               <td style="vertical-align: middle; text-align:center">
                 @if ($complaint->complainer_type == "charity")
