@@ -42,7 +42,10 @@ class CharityUserController extends Controller
         if (auth()->guard('charity')->attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Charity::select('_charities.*')->find(auth()->guard('charity')->user()->id);
             $user['token'] =  $user->createToken('MyApp', ['charity'])->accessToken;
-            return response()->json($this->sendResponse($status = true, $message = "تم تسجيل الدخول بنجاح", $data = $user));
+            if($user->activation_status == 1){
+                return response()->json($this->sendResponse($status = true, $message = "تم تسجيل الدخول بنجاح", $data = $user));
+            }
+            return response()->json($this->sendResponse($status = false, $message = "تعذر تسجيل الدخول بسبب تعطيل حسابك", $data = $user));
         } else {
             return response()->json($this->sendResponse($status = false, $message = "البريد الالكتروني أو كلمة المرور غير صحيحة", $data = null));
         }
