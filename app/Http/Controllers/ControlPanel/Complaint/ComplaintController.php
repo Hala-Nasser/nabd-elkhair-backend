@@ -30,7 +30,7 @@ class ComplaintController extends Controller
                 $donor = Donor::find($complaint->complainer_id);
                 $complaint->complainer_name = $donor->name??null;
                 $charity = Charity::find($complaint->defendant_id);
-                $complaint->defendant_name = $charity->name;
+                $complaint->defendant_name = $charity->name??null;
             }
           }
         return view('ControlPanel.complaint.index')->with('complaints', $complaints);

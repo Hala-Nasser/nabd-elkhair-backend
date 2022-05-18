@@ -11,6 +11,7 @@ use App\Models\Donor;
 use App\Models\PaymentLink;
 use App\Models\DonationType;
 use App\Models\Donation;
+use App\Models\Notification;
 use Validator;
 use Auth;
 use Illuminate\Support\Str;
@@ -231,14 +232,22 @@ class CharityUserController extends Controller
         if ($validator->fails()) { 
             return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
-    
-            $data = $request->all();
-            $data['complainer_id'] = auth()->guard('charity-api')->user()->id;
-            $data['complainer_type'] = 'Charity';
-            $response = Complaint::create($data);
-            $status = $response->save();
+        $data = $request->all();
+        $data['complainer_id'] = auth()->guard('charity-api')->user()->id;
+        $response = Complaint::create($data);
+        $status = $response->save();
 
-            return response()->json($this->sendResponse($status=$status,$message=(($status)?"success":"failed"), $data=$response)); 
+        if ($status) {
+            $complaints = Complaint::select('*')->where('defendant_id', $request['defendant_id'])->where('complainer_type', $request['complainer_type'])->get();
+            if (count($complaints) >= 5) {
+                $donor = Donor::find($request['defendant_id']);
+                $donor->activation_status = 0;
+                $result = $donor->save();
+                return response()->json($this->sendResponse($status = true, $message = "إذا أصبح عدد الشكاوي 5 فأكثر، سيتم تعطيل حساب المشتكى عليه", $data = null));
+            }
+        }
+
+        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "success" : "failed"), $data = $response));
     }
 
     public function addCampaign(Request $request) 
@@ -290,14 +299,10 @@ class CharityUserController extends Controller
         if ($validator->fails()) { 
             return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
-        $campaign = Campaign::find($request->campaign_id);
-        $campaign->expiry_date = $request->expiry_date;
-        $campaign->expiry_time = $request->expiry_time;
+        $request['id'] = auth()->guard('charity-api')->user()->id;
+        $obj = parent::saveModel($request, Campaign::class, true);
 
-        $status = $campaign->update();
-
-        return response()->json($this->sendResponse($status=$success,$message=(($success)?"Campaign updated successfully":"failed"), $data=$campaign));
-
+        return response()->json($this->sendResponse($status = (($obj) ? true : false), $message = (($obj) ? "تم تعديل الحملة بنجاح" : "فشل تعديل الحملة"), $data = (($obj) ? $obj : null)));
     }
 
     public function deleteCampaign ($id){
@@ -318,6 +323,7 @@ class CharityUserController extends Controller
         }
         $donation = Donation::find($request->donation_id);
         $donation->acceptance = $request->acceptance;
+        $donation->done = 1;
         $success = $donation->update();
         return response()->json($this->sendResponse($status=$success,$message=(($success)? ($donation->acceptance)? "تم قبول التبرع بنجاح":"تم رفض طلب التبرع":"فشل قبول الطلب"), $data=""));
     }
@@ -356,7 +362,8 @@ class CharityUserController extends Controller
 
    
     public function getComplaints(){
-        $list = Complaint::with('donor')->where('complainer_type','Donor')->get(); 
+        $list = Complaint::with('donor')->where('defendant_id',auth()->guard('charity-api')->user()->id)
+        ->where('complainer_type','Donor')->get(); 
         return response()->json($this->sendResponse($status=true,$message="", $data=$list)); 
     }
 
@@ -370,27 +377,59 @@ class CharityUserController extends Controller
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
 
-    public function getCampaigns(){
-        $list = Campaign::all();    
-        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
-    }
-
     public function getCharity(){
         $list = Charity::where('id',auth()->guard('charity-api')->user()->id)->first();    
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
 
-    public function getDonations(){
+    public function getDonationRequests(){
         $list = Donation::with('donor')->with('campaign')
+        ->where('done', 0)
         ->get(); 
-        // $capmaign_donations_count = count(Donation::select('*')->where('charity_id', $id)->where('received', 1)->whereNotNull('campaign_id')->get());
-        // $charity_donations_count = count(Donation::select('*')->where('charity_id', $id)->where('received', 1)->whereNull('campaign_id')->get());
-        // $list->capmaign_donations_count = $capmaign_donations_count;
-        // $list->charity_donations_count = $charity_donations_count;
-        // $diffInDays = $user->created_at->diffInDays();
-        //  $showDiff =  $user->created_at->addDays($diffInDays)->diffInHours().' Hours';
-        // echo $showDiff;
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    }
+
+    public function getDonationNotReceived(){
+        $list = Donation::with('donor')->with('campaign')->where('acceptance', 1)
+        ->where('received', 0)
+        ->get(); 
+        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    }
+
+    public function getDonationReceived(){
+        $list = Donation::with('donor')->with('campaign')->where('acceptance', 1)
+        ->where('received', 1)
+        ->get(); 
+        return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    }
+
+    public function CampaignsAccordingToDonationType($donation_type)
+    {
+        $charity = auth()->guard('charity-api')->user();
+        $active_campaings = [];
+        $campaigns = Campaign::
+         select('*')->where('charity_id',$charity->id)
+        ->where('donation_type_id', $donation_type)
+        ->with('donation.donor')
+        ->get();
+        if ($donation_type == 0) {
+            $campaigns = Campaign::with('donation')->select('*')->where('charity_id',$charity->id)->get();
+        }
+
+        foreach ($campaigns as $campaign) {
+            if ($charity->activation_status==1) {
+                $donation_type_list = [];
+                $donation_type_obj = DonationType::find($campaign->donation_type_id);
+                if ($donation_type_obj->name != "مال") {
+                    array_push($donation_type_list, DonationType::select('*')->where('name', "مال")->first());
+                }
+                array_push($donation_type_list, $donation_type_obj);
+                $campaign->donation_type = $donation_type_list;
+                array_push($active_campaings, $campaign);
+            }
+        }
+
+        return response()->json($this->sendResponse($status = true, $message = "تم جلب الحملات بنجاح", $data = $active_campaings));
     }
 
     public function getCampaignDonations(){
