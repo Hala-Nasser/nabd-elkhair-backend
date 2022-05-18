@@ -32,7 +32,11 @@ class DonorController extends Controller
         if (auth()->guard('donor')->attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Donor::select('donors.*')->find(auth()->guard('donor')->user()->id);
             $user['token'] =  $user->createToken('MyApp', ['donor'])->accessToken;
-            return response()->json($this->sendResponse($status = true, $message = "تم تسجيل الدخول بنجاح", $data = $user));
+
+            if($user->activation_status == 1){
+                return response()->json($this->sendResponse($status = true, $message = "تم تسجيل الدخول بنجاح", $data = $user));
+            }
+            return response()->json($this->sendResponse($status = false, $message = "تعذر تسجيل الدخول بسبب تعطيل حسابك", $data = $user));
         } else {
             return response()->json($this->sendResponse($status = false, $message = "البريد الالكتروني أو كلمة المرور غير صحيحة", $data = null));
         }
