@@ -263,17 +263,24 @@ class DonorController extends Controller
         return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $donor));
     }
 
-    public function myDonation($id)
+    public function myDonation($id, $donation_type)
     {
-        $donations = Donation::select('*')->where('donor_id', $id)->where('received', 1)->get();
-
-        foreach ($donations as $donation) {
-            if (is_null($donation->campaign_id)) {
-                $donation->charity_details = Charity::find($donation->charity_id);
-            } else {
-                $donation->campaign_details = Campaign::find($donation->campaign_id);
-            }
+        $donations = [];
+      //  $all_donations = Donation::select('*')->where('donor_id', $id)->where('received', 1)->get();
+        if ($donation_type == 0) {
+            $donations = Donation::select('*')->where('donor_id', $id)->where('received', 1)->get();
+        }else{
+            $donations = Donation::select('*')->where('donor_id', $id)->where('received', 1)->where('donation_type_id', $donation_type)->get();
         }
+        
+        foreach ($donations as $donation) {
+            $donation->charity_details = Charity::find($donation->charity_id);
+                if (is_null($donation->campaign_id)) {
+                    $donation->campaign_details = null;
+                } else {
+                    $donation->campaign_details = Campaign::find($donation->campaign_id);
+                }
+            }
 
         return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $donations));
     }
