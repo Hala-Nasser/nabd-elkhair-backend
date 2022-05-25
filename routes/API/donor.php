@@ -25,7 +25,7 @@ Route::get('donor/CampaignsAccordingToCharity/{charity}',[DonorController::class
 Route::get('donor/charities',[DonorController::class, 'charities']);
 Route::get('donor/charity/search/{keyword}',[DonorController::class, 'charitySearch']);
 Route::get('donor/profile/{id}',[DonorController::class, 'profile']);
-Route::get('donor/mydonation/{id}',[DonorController::class, 'myDonation']);
+Route::get('donor/mydonation/{id}/{donation_type}',[DonorController::class, 'myDonation']);
 Route::post('donor/profile/update',[DonorController::class, 'updateProfile']);
 Route::get('donor/donationtype', [DonorController::class, 'getDonationTypes']);
 Route::get('donor/static/{id}', [DonorController::class, 'getStaticPages']);
