@@ -393,17 +393,6 @@ class CharityUserController extends Controller
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
 
-    // public function deleteDonationRequests(){
-    //     $list = Donation::
-    //      where('done', 0)
-    //     ->where('charity_id',auth()->guard('charity-api')->user()->id)
-    //     ->get();
-    //     foreach ($list as $donation) {
-    //         $donation->done = 1;
-    //         $donation->save();
-    //     }
-    //     return response()->json($this->sendResponse($status=true,$message="", $data=$list));
-    // }
 
     public function getDonationNotReceived(){
         $list = Donation::with('donor')->with('campaign')->where('acceptance', 1)
