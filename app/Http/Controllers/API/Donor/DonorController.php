@@ -163,7 +163,7 @@ class DonorController extends Controller
             }
         }
 
-        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "success" : "failed"), $data = $response));
+        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "success" : "failed"), $data = ""));
     }
 
 

@@ -244,7 +244,7 @@ class CharityUserController extends Controller
             }
         }
 
-        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "success" : "failed"), $data = $response));
+        return response()->json($this->sendResponse($status = $status, $message = (($status) ? "success" : "failed"), $data = ""));
     }
 
     public function addCampaign(Request $request) 
@@ -287,19 +287,22 @@ class CharityUserController extends Controller
     }
 
     public function updateCampaign (Request $request){
-        $validator = Validator::make($request->all(), [ 
-            'campaign_id' => 'required',
-            'expiry_date' => 'required',
-            'expiry_time' => 'required',
-        ]);
+        // $validator = Validator::make($request->all(), [ 
+        //     'campaign_id' => 'required',
+        //     'expiry_date' => 'required',
+        //     'expiry_time' => 'required',
+        // ]);
 
-        if ($validator->fails()) { 
-            return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
-        }
-        $request['id'] = auth()->guard('charity-api')->user()->id;
-        $obj = parent::saveModel($request, Campaign::class, true);
+        // if ($validator->fails()) { 
+        //     return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
+        // }
+        $campaign = Campaign::find($request->campaign_id);
+        $campaign->expiry_date = $request->expiry_date;
+        $campaign->expiry_time = $request->expiry_time;
 
-        return response()->json($this->sendResponse($status = (($obj) ? true : false), $message = (($obj) ? "تم تعديل الحملة بنجاح" : "فشل تعديل الحملة"), $data = (($obj) ? $obj : null)));
+        $status = $campaign->update();
+
+        return response()->json($this->sendResponse($status=$status,$message=(($status)?"Campaign updated successfully":"failed"), $data=$campaign));
     }
 
     public function deleteCampaign ($id){
@@ -382,13 +385,27 @@ class CharityUserController extends Controller
     public function getDonationRequests(){
         $list = Donation::with('donor')->with('campaign')
         ->where('done', 0)
+        ->where('charity_id',auth()->guard('charity-api')->user()->id)
         ->get(); 
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
 
+    // public function deleteDonationRequests(){
+    //     $list = Donation::
+    //      where('done', 0)
+    //     ->where('charity_id',auth()->guard('charity-api')->user()->id)
+    //     ->get();
+    //     foreach ($list as $donation) {
+    //         $donation->done = 1;
+    //         $donation->save();
+    //     }
+    //     return response()->json($this->sendResponse($status=true,$message="", $data=$list));
+    // }
+
     public function getDonationNotReceived(){
         $list = Donation::with('donor')->with('campaign')->where('acceptance', 1)
         ->where('received', 0)
+        ->where('charity_id',auth()->guard('charity-api')->user()->id)
         ->get(); 
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
@@ -396,6 +413,7 @@ class CharityUserController extends Controller
     public function getDonationReceived(){
         $list = Donation::with('donor')->with('campaign')->where('acceptance', 1)
         ->where('received', 1)
+        ->where('charity_id',auth()->guard('charity-api')->user()->id)
         ->get(); 
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
@@ -410,7 +428,11 @@ class CharityUserController extends Controller
         ->with('donation.donor')
         ->get();
         if ($donation_type == 0) {
-            $campaigns = Campaign::with('donation')->select('*')->where('charity_id',$charity->id)->get();
+            $campaigns = Campaign::with('donation')
+            ->select('*')
+            ->where('charity_id',$charity->id)
+            ->with('donation.donor')
+            ->get();
         }
 
         foreach ($campaigns as $campaign) {
