@@ -64,8 +64,14 @@
               </th>
             </tr>
           </thead>
+          @if($charities->isEmpty())
           <tbody>
-
+            <tr>
+              <td valign="top" colspan="8" style="text-align: center">لا يوجد جمعيات</td>
+            </tr>
+          </tbody>
+          @else
+          <tbody>
             @foreach($charities as $charity)
             <tr>
               <td style="vertical-align: middle; text-align:center">
@@ -88,7 +94,7 @@
                 </a>
                 <form action="{{ URL('charity/delete/' . $charity->id) }}" method="POST" style="display: inline;">
                   @csrf
-                  <button type="submit" class="btn btn-danger btn-sm">
+                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('هل تريد حذف الجمعية؟')">
                     <i class="fas fa-trash">
                     </i>
                     حذف</button>
@@ -102,8 +108,9 @@
               </td>
             </tr>
             @endforeach
-
           </tbody>
+
+          @endif
         </table>
       </div>
       <!-- /.card-body -->

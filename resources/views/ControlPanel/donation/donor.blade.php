@@ -41,7 +41,7 @@
             <i class="fas fa-minus"></i>
           </button>
         </div>
-        <h3 class="card-title">تبرعات {{$charity_name}}</h3>
+        <h3 class="card-title">تبرعات {{$donor_name}}</h3>
       </div>
       <div class="card-body p-0">
         <table class="table table-striped projects">
@@ -51,7 +51,7 @@
                 #
               </th>
               <th style="width: 15%; text-align:center">
-                المتبرع
+                الجمعية
               </th>
               <th style="width: 15%; text-align:center">
                 اسم الحملة
@@ -59,17 +59,14 @@
               <th style="width: 10%; text-align:center">
                 نوع التبرع
               </th>
+              <th style="width: 10%; text-align:center">
+                طريقة التبرع
+              </th>
               <th style="width: 15%; text-align:center">
                 رابط التبرع
               </th>
               <th style="width: 10%; text-align:center">
-                وصف التبرع
-              </th>
-              <th style="width: 10%; text-align:center">
-                رقم المتبرع
-              </th>
-              <th style="width: 20%; text-align:center">
-                عنوان المتبرع
+                مبلغ التبرع
               </th>
             </tr>
           </thead>
@@ -78,7 +75,7 @@
           @if($donations->isEmpty())
           <tbody>
             <tr>
-              <td valign="top" colspan="12" style="text-align: center">لا يوجد تبرعات</td>
+              <td valign="top" colspan="8" style="text-align: center">لا يوجد تبرعات</td>
             </tr>
           </tbody>
           @else
@@ -99,6 +96,9 @@
                   style="width:50px; height:40px; border-radius: 8px; object-fit: contain;">
               </td>
               <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $donation->donation_way }}</h6>
+              </td>
+              <td style="vertical-align: middle; text-align:center">
                 @if ($donation->payment_link == null)
                 <h6 style="font-size:14px;">-</h6>
                 @else
@@ -109,22 +109,7 @@
                 @if ($donation->donation_amount == null)
                 <h6 style="font-size:14px;">-</h6>
                 @else
-                <h6 style="font-size:14px;">{{ $donation->donation_description }}</h6>
-                @endif
-              </td>
-              <td style="vertical-align: middle; text-align:center">
-                @if ($donation->donor_phone == null)
-                <h6 style="font-size:14px;">-</h6>
-                @else
-                <h6 style="font-size:14px;">{{ $donation->donor_phone }}</h6>
-                @endif
-              </td>
-              <td style="vertical-align: middle; text-align:center">
-                @if ($donation->donor_district == null)
-                <h6 style="font-size:14px;">-</h6>
-                @else
-                <h6 style="font-size:14px;">{{ $donation->donor_district }}-{{ $donation->donor_city }}-{{
-                  $donation->donor_address }}</h6>
+                <h6 style="font-size:14px;">{{ $donation->donation_amount }}</h6>
                 @endif
               </td>
             </tr>

@@ -1,7 +1,7 @@
 @extends('ControlPanel.layouts.layout')
 
 @section('title')
-<title>{{$charity->name}}</title>
+<title>{{$donor->name}}</title>
 @stop
 
 @section('css')
@@ -46,7 +46,7 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>تفاصيل الجمعية</h1>
+          <h1>تفاصيل المتبرع</h1>
         </div>
       </div>
     </div><!-- /.container-fluid -->
@@ -65,7 +65,7 @@
             <i class="fas fa-minus"></i>
           </button>
         </div>
-        <h3 class="card-title">{{ $charity->name }}</h3>
+        <h3 class="card-title">{{ $donor->name }}</h3>
       </div>
       <!-- form start -->
       <div class="card-body">
@@ -74,75 +74,29 @@
           <div class="column" style="width: 60%; float: right;">
             <div class="form-group">
               <label>البريد الالكتروني</label>
-              <input type="text" class="form-control" placeholder="Enter name" name="name" value="{{ $charity->email }}"
+              <input type="text" class="form-control" placeholder="Enter name" name="name" value="{{ $donor->email }}"
                 style="pointer-events: none;">
             </div>
     
             <div class="form-group">
               <label>العنوان</label>
               <input type="text" class="form-control" placeholder="Enter address" name="address"
-                value="{{ $charity->address }}" style="pointer-events: none;">
+                value="{{ $donor->location }}" style="pointer-events: none;">
             </div>
     
             <div class="form-group">
               <label for="exampleInputPassword1">رقم الهاتف</label>
               <input type="phone" class="form-control" placeholder="Enter phone number" name="phone"
-                value="{{ $charity->phone }}" style="pointer-events: none;">
-            </div>
-    
-            <div class="form-group">
-              <label for="exampleSelectBorder">عن الجمعية</label>
-              <div class="form-group"
-                style=" border: 1px solid #ced4da; border-radius: 0.25rem; padding-right:10px; padding-top: 5px">
-                <p style="pointer-events: none;">
-                  {{ $charity->about }}
-                </p>
-              </div>
-            </div>
-    
-            @if($charity->payment_links != null && !empty($charity->payment_links))
-            
-            @if ($charity->payment_links->paypal_link != null)
-            <div class="form-group">
-              <label for="exampleSelectBorder">رابط الباي بال</label>
-              <input type="url" class="form-control" placeholder="Enter paypal link" name="paypal"
-                value="{{ $charity->payment_links->paypal_link}}" style="pointer-events: none;">
-            </div>
-            @endif
-    
-            @if ($charity->payment_links->visa_link != null)
-            <div class="form-group">
-              <label for="exampleSelectBorder">رابط الفيزا</label>
-              <input type="url" class="form-control" placeholder="Enter visa link" name="visa"
-                value="{{ $charity->payment_links->visa_link}}" style="pointer-events: none;">
-            </div>
-            @endif
-    
-            
-            @if ($charity->payment_links->creditcard_link != null)
-            <div class="form-group">
-              <label for="exampleSelectBorder">رابط الكريديت كارد</label>
-              <input type="url" class="form-control" placeholder="Enter credit card link" name="credit"
-                value="{{ $charity->payment_links->creditcard_link}}" style="pointer-events: none;">
-            </div>
-            @endif
-            @endif
-    
-    
-    
-            <div class="form-group">
-              <label for="exampleInputPassword1">مفتوح من</label>
-              <input type="phone" class="form-control" placeholder="Enter phone number" name="phone"
-                value="{{ $charity->open_time }}" style="pointer-events: none;">
+                value="{{ $donor->phone }}" style="pointer-events: none;">
             </div>
 
-            @if ($charity->activation_status == 1)
-          <form action="{{ URL('charity/disable/' . $charity->id) }}" method="POST">
+            @if ($donor->activation_status == 1)
+          <form action="{{ URL('donor/disable/' . $donor->id) }}" method="POST">
             @csrf
             <button type="submit" class="btn btn-danger" style="margin-bottom:20px;">تعطيل</button>
           </form>
           @else
-          <form action="{{ URL('charity/enable/' . $charity->id) }}" method="POST">
+          <form action="{{ URL('donor/enable/' . $donor->id) }}" method="POST">
             @csrf
             <button type="submit" class="btn btn-info" style="margin-bottom:20px;">تفعيل</button>
           </form>
@@ -154,7 +108,7 @@
         </div>
 
           <div class="column" style="width: 30%; float: right; margin_right:5px;">
-            <img src="{{asset('storage/uploads/images/'.$charity->image)}}" alt="{{$charity->name}}" style="width: 100%;  border-radius: 8px; object-fit: cover; height:300px;" id="img">
+            <img src="{{asset('storage/uploads/images/'.$donor->image)}}" alt="{{$donor->name}}" style="width: 100%;  border-radius: 8px; object-fit: cover; height:300px;" id="img">
         </div>
         
           </div>

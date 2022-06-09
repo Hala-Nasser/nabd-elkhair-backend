@@ -35,4 +35,23 @@ class DonationController extends Controller
         }
         return view('ControlPanel.donation.index')->with('donations', $donations)->with('charity_name', $charity_name);
     }
+
+    public function donor(Request $request, $id){
+        $donor = Donor::find($id);
+        $donor_name = $donor->name;
+        $donations = Donation::select('*')->where('donor_id', $id)->get();
+        foreach ($donations as $donation){
+            $charity = Charity::find($donation->charity_id);
+            $donation->charity_name = $charity->name;
+            if($donation->campaign_id == null){
+                $donation->campaign_name = "بدون حملة";
+            }else{
+                $campaign = Campaign::find($donation->campaign_id);
+                $donation->campaign_name = $campaign->name;
+            }
+            $donation_type = DonationType::find($donation->donation_type_id);
+            $donation->donation_type_image = $donation_type->image;
+        }
+        return view('ControlPanel.donation.index')->with('donations', $donations)->with('donor_name', $donor_name);
+    }
 }

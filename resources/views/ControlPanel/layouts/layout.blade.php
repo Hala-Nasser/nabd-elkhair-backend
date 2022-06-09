@@ -279,19 +279,19 @@
       $('#donor').addClass('active');
     @elseif (\Request::url() == URL('Complaint'))
       $('#Complaint').addClass('active');
-      @elseif (\Request::url() == URL('about'))
+    @elseif (\Request::url() == URL('static/1'))
       $('#aboutapp').addClass('active');
       $('#static_pages').addClass('active');
-    @elseif (\Request::url() == URL('privacy'))
+    @elseif (\Request::url() == URL('static/2'))
       $('#privacypolicy').addClass('active');
       $('#static_pages').addClass('active');
-    @elseif (\Request::url() == URL('onboarding1'))
+    @elseif (\Request::url() == URL('static/3'))
       $('#onboarding1').addClass('active');
       $('#static_pages').addClass('active');
-    @elseif (\Request::url() == URL('onboarding2'))
+    @elseif (\Request::url() == URL('static/4'))
       $('#onboarding2').addClass('active');
       $('#static_pages').addClass('active');
-      @elseif (\Request::url() == URL('onboarding3'))
+      @elseif (\Request::url() == URL('static/5'))
       $('#onboarding3').addClass('active');
       $('#static_pages').addClass('active');
     @endif
