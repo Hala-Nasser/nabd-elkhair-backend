@@ -19,6 +19,12 @@ class DonorController extends Controller
         return view('ControlPanel.donor.index')->with('donors', $donors);
     }
 
+    public function details(Request $request, $id)
+    {
+        $donor = Donor::find($id);
+        return view('ControlPanel.donor.details')->with('donor', $donor);
+    }
+
     public function enable(Request $request, $id)
     {
         $donor = Donor::find($id);

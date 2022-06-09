@@ -34,7 +34,7 @@
     <!-- Default box -->
     <div class="card" style="margin-right: 10px; margin-left: 10px">
       <div class="card-header">
-        
+
 
         <div class="card-tools">
           <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -57,12 +57,22 @@
                 البريد الالكتروني
               </th>
               <th style="width: 20%; text-align:center">
+                رقم الهاتف
+              </th>
+              <th style="width: 40%; text-align:center">
                 الاجراءات
               </th>
             </tr>
           </thead>
-          <tbody>
 
+          @if($donors->isEmpty())
+          <tbody>
+            <tr>
+              <td valign="top" colspan="8" style="text-align: center">لا يوجد متبرعين</td>
+            </tr>
+          </tbody>
+          @else
+          <tbody>
             @foreach($donors as $donor)
             <tr>
               <td style="vertical-align: middle; text-align:center">
@@ -75,17 +85,14 @@
                 <h6 style="font-size:14px;">{{ $donor->email }}</h6>
               </td>
               <td style="vertical-align: middle; text-align:center">
-                @if ($donor->activation_status == 1)
-                <form action="{{ URL('donor/disable/' . $donor->id) }}" method="POST" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="btn btn-danger btn-sm">تعطيل</button>
-                </form>
-                @else
-                <form action="{{ URL('donor/enable/' . $donor->id) }}" method="POST" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="btn btn-info btn-sm">تفعيل</button>
-                </form>
-                @endif
+                <h6 style="font-size:14px;">{{ $donor->phone }}</h6>
+              </td>
+              <td style="vertical-align: middle; text-align:center">
+                <a class="btn btn-info btn-sm" href="{{ URL('donor/' . $donor->id) }}">
+                  <i class="fa fa-eye">
+                  </i>
+                  عرض
+                </a>
                 <form action="{{ URL('donor/delete/' . $donor->id) }}" method="POST" style="display: inline;">
                   @csrf
                   <button type="submit" class="btn btn-danger btn-sm">
@@ -93,11 +100,19 @@
                     </i>
                     حذف</button>
                 </form>
+                <a class="btn btn-secondary btn-sm" href="{{ URL('donor/donation/' . $donor->id) }}">
+                  <i>
+                    <img src="{{ asset('donation.png') }}" style="width: 19px; height:19px">
+                  </i>
+                  عرض التبرعات
+                </a>
               </td>
             </tr>
             @endforeach
-
           </tbody>
+
+          @endif
+
         </table>
       </div>
       <!-- /.card-body -->

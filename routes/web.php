@@ -24,6 +24,7 @@ Route::post('charity/disable/{id}', [App\Http\Controllers\ControlPanel\Charity\C
 Route::post('charity/delete/{id}', [App\Http\Controllers\ControlPanel\Charity\CharityController::class, 'destroy']);
 
 Route::get('/donor', [App\Http\Controllers\ControlPanel\Donor\DonorController::class, 'index'])->name('donor');
+Route::get('donor/{id}', [App\Http\Controllers\ControlPanel\Donor\DonorController::class, 'details']);
 Route::post('donor/enable/{id}', [App\Http\Controllers\ControlPanel\Donor\DonorController::class, 'enable']);
 Route::post('donor/disable/{id}', [App\Http\Controllers\ControlPanel\Donor\DonorController::class, 'disable']);
 Route::post('donor/delete/{id}', [App\Http\Controllers\ControlPanel\Donor\DonorController::class, 'destroy']);
