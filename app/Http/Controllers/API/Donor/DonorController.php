@@ -180,10 +180,10 @@ class DonorController extends Controller
             $status = true;
             if($obj->campaign_id != null){
                 $campaign = Campaign::find($request['campaign_id']);
-             $notification_content = ' قام' . $donor->name . ' بالتبرع لدى حملة '. $campaign->name ;
+             $notification_content = ' قام ' . $donor->name . ' بالتبرع لدى حملة '. $campaign->name ;
              $this->sendNotification('تبرع جديد', $notification_content, Charity::class, $donor->image, "charity");
             }else{
-                $notification_content =  ' قام'. $donor->name.'بالتبرع لدى الجمعية ';
+                $notification_content =  ' قام '. $donor->name.'بالتبرع لدى الجمعية ';
                 $this->sendNotification('تبرع جديد', $notification_content, Charity::class, $donor->image, "charity");
             }
             //send notification
