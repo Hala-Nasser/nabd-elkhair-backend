@@ -449,7 +449,6 @@ class CharityUserController extends Controller
 
         $list = Donation::with('donor')->with('campaign')->where('charity_id', $id)
         ->where('acceptance', 1)->whereNotNull('campaign_id')->get();
-
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
 
@@ -466,7 +465,7 @@ class CharityUserController extends Controller
 
     public function getNotifications($reciever_id)
     {
-        $notifications = Notification::select('*')->where('reciever_id', $reciever_id)->orderBy('created_at', 'desc')->get();
+        $notifications = Notification::select('*')->where('reciever_id', $reciever_id)->where('reciever_type','charity')->orderBy('created_at', 'desc')->get();
         return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $notifications));
     }
 
