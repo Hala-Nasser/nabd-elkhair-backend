@@ -443,6 +443,23 @@ class CharityUserController extends Controller
         return response()->json($this->sendResponse($status = true, $message = "تم جلب الحملات بنجاح", $data = $active_campaings));
     }
 
+    public function getDonationsCount(){
+    
+        $id = auth()->guard('charity-api')->user()->id;
+
+        $donationWithCampainCount = count(Donation::with('donor')->with('campaign')->where('charity_id', $id)
+        ->where('acceptance', 1)->whereNotNull('campaign_id')->get());
+
+        $donationWithoutCampainCount = count(Donation::with('donor')->where('charity_id', $id)
+        ->where('acceptance', 1)->whereNull('campaign_id')->get());
+
+        $count = ["donationWithCampainCount" => $donationWithCampainCount,
+        "donationWithoutCampainCount" => $donationWithoutCampainCount
+        ];
+
+        return response()->json($this->sendResponse($status=true,$message="", $data=$count));
+    }
+
     public function getCampaignDonations(){
     
         $id = auth()->guard('charity-api')->user()->id;
