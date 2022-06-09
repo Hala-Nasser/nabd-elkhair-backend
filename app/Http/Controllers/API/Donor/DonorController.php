@@ -309,7 +309,7 @@ class DonorController extends Controller
 
     public function getNotifications($reciever_id)
     {
-        $notifications = Notification::select('*')->where('reciever_id', $reciever_id)->orderBy('created_at', 'desc')->get();
+        $notifications = Notification::select('*')->where('reciever_id', $reciever_id)->where('reciever_type','donor')->orderBy('created_at', 'desc')->get();
         return response()->json($this->sendResponse($status = true, $message = "تم جلب البيانات بنجاح", $data = $notifications));
     }
 
