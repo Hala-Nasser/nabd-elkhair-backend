@@ -64,8 +64,14 @@
                             </th>
                         </tr>
                     </thead>
+                    @if($donation_types->isEmpty())
                     <tbody>
-
+                        <tr>
+                            <td valign="top" colspan="8" style="text-align: center">لا يوجد أنواع تبرع مضافة</td>
+                        </tr>
+                    </tbody>
+                    @else
+                    <tbody>
                         @foreach($donation_types as $donation_type)
                         <tr>
                             <td style="vertical-align: middle; text-align:center">
@@ -81,27 +87,29 @@
 
                             <td style="vertical-align: middle; text-align:center">
                                 <div class="container">
-                                    <a class="btn btn-info btn-sm" href="{{ URL('donationtype/edit/' . $donation_type->id) }}">
+                                    <a class="btn btn-info btn-sm"
+                                        href="{{ URL('donationtype/edit/' . $donation_type->id) }}">
                                         تعديل
                                     </a>
-                                    @if ($donation_type->deleted_at == null)
-                                    <form action="{{ URL('donationtype/delete/' . $donation_type->id) }}" method="POST" style="display: inline">
+
+                                    <form action="{{ URL('donationtype/delete/' . $donation_type->id) }}" method="POST"
+                                        style="display: inline;">
                                         @csrf
-                                        <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('هل تريد حذف نوع التبرع')">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                            حذف</button>
+
                                     </form>
-                                    @else
-                                    <form action="{{ URL('donationtype/restore/' . $donation_type->id) }}"
-                                        method="POST" style="display: inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-info btn-sm">استرجاع</button>
-                                    </form>
-                                    @endif
+
                                 </div>
                             </td>
                         </tr>
                         @endforeach
-
                     </tbody>
+
+                    @endif
                 </table>
             </div>
             <!-- /.card-body -->

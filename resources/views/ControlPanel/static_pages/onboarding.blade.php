@@ -42,7 +42,7 @@
     <!-- Default box -->
     <div class="card" style="margin-right: 10px; margin-left: 10px">
       <div class="card-header">
-        <h3 class="card-title" style="color: black;">شاشة الترحيب الثالثة</h3>
+        <h3 class="card-title" style="color: black;">{{$staticPage->name}}</h3>
       </div>
       <!-- form start -->
       <form method="post" action="{{ URL('static/store/' . $staticPage->id) }}" enctype="multipart/form-data">

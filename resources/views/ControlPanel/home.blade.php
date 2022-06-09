@@ -172,7 +172,7 @@
                 </a>
                 <form action="{{ URL('charity/delete/' . $charity->id) }}" method="POST" style="display: inline;">
                   @csrf
-                  <button type="submit" class="btn btn-danger btn-sm">
+                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('هل تريد حذف الجمعية؟')">
                     <i class="fas fa-trash">
                     </i>
                     حذف</button>
@@ -190,7 +190,6 @@
 
           @endif
 
-          </tbody>
         </table>
       </div>
       <!-- /.card-body -->

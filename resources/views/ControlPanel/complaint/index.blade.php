@@ -67,8 +67,15 @@
               </th>
             </tr>
           </thead>
-          <tbody>
 
+          @if($complaints->isEmpty())
+          <tbody>
+            <tr>
+              <td valign="top" colspan="8" style="text-align: center">لا يوجد شكاوي</td>
+            </tr>
+          </tbody>
+          @else
+          <tbody>
             @foreach($complaints as $complaint)
             <tr>
               <td style="vertical-align: middle; text-align:center">
@@ -90,21 +97,25 @@
               </td>
               <td style="vertical-align: middle; text-align:center">
                 @if ($complaint->complainer_type == "charity")
-                    <form action="{{ URL('donor/disable/' . $complaint->defendant_id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-danger" style="margin-bottom:20px; margin-right:20px">تعطيل</button>
-                    </form>
-                    @else
-                    <form action="{{ URL('charity/disable/' . $complaint->defendant_id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-danger" style="margin-bottom:20px; margin-right:20px">تعطيل</button>
-                    </form>
-                    @endif
+                <form action="{{ URL('donor/disable/' . $complaint->defendant_id) }}" method="POST">
+                  @csrf
+                  <button type="submit" class="btn btn-danger"
+                    style="margin-bottom:20px; margin-right:20px">تعطيل</button>
+                </form>
+                @else
+                <form action="{{ URL('charity/disable/' . $complaint->defendant_id) }}" method="POST">
+                  @csrf
+                  <button type="submit" class="btn btn-danger"
+                    style="margin-bottom:20px; margin-right:20px">تعطيل</button>
+                </form>
+                @endif
               </td>
             </tr>
             @endforeach
-
           </tbody>
+
+          @endif
+
         </table>
       </div>
       <!-- /.card-body -->
