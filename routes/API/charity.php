@@ -45,6 +45,7 @@ Route::group( ['prefix' => 'charity','middleware' => ['auth:charity-api','scopes
         // Route::get('deleteDonationRequests', [CharityUserController::class,'deleteDonationRequests']);
         Route::get('getDonationNotReceived', [CharityUserController::class,'getDonationNotReceived']);
         Route::get('getDonationReceived', [CharityUserController::class,'getDonationReceived']);
+        Route::get('getDonationsCount', [CharityUserController::class,'getDonationsCount']);
         Route::get('getCampaignDonations', [CharityUserController::class,'getCampaignDonations']);
         Route::get('getWithoutCampaignDonations', [CharityUserController::class,'getWithoutCampaignDonations']);
         Route::get('logout',[CharityUserController::class, 'logout']); //
