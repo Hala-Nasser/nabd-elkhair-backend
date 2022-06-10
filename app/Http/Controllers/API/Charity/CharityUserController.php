@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Mail\ForgotPasswordMail;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 class CharityUserController extends Controller
 {
@@ -396,6 +397,13 @@ class CharityUserController extends Controller
         ->where('done', 0)
         ->where('charity_id',auth()->guard('charity-api')->user()->id)
         ->get(); 
+        foreach($list as $item){
+        $numMilisecondsSinceEpoch = Carbon::parse($item->created_at)->getPreciseTimestamp(3);
+        $item->milli = $numMilisecondsSinceEpoch;
+        $item->date = date('Y-m-d H:i:s', strtotime($item->created_at));
+
+        }
+        
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
 
@@ -423,13 +431,21 @@ class CharityUserController extends Controller
         $campaigns = Campaign::
          select('*')->where('charity_id',$charity->id)
         ->where('donation_type_id', $donation_type)
-        ->with('donation.donor')
+        ->with('donation',
+        function($query){
+            $query->where('received', '=', 1)->with('donor');
+        
+        })
         ->get();
         if ($donation_type == 0) {
             $campaigns = Campaign::with('donation')
             ->select('*')
             ->where('charity_id',$charity->id)
-            ->with('donation.donor')
+            ->with('donation',
+            function($query){
+                $query->where('received', '=', 1)->with('donor');
+            
+            })
             ->get();
         }
 
@@ -454,10 +470,10 @@ class CharityUserController extends Controller
         $id = auth()->guard('charity-api')->user()->id;
 
         $donationWithCampainCount = count(Donation::with('donor')->with('campaign')->where('charity_id', $id)
-        ->where('acceptance', 1)->whereNotNull('campaign_id')->get());
+        ->where('received', 1)->whereNotNull('campaign_id')->get());
 
         $donationWithoutCampainCount = count(Donation::with('donor')->where('charity_id', $id)
-        ->where('acceptance', 1)->whereNull('campaign_id')->get());
+        ->where('received', 1)->whereNull('campaign_id')->get());
 
         $count = ["donationWithCampainCount" => $donationWithCampainCount,
         "donationWithoutCampainCount" => $donationWithoutCampainCount
@@ -470,8 +486,13 @@ class CharityUserController extends Controller
     
         $id = auth()->guard('charity-api')->user()->id;
 
-        $list = Donation::with('donor')->with('campaign')->where('charity_id', $id)
-        ->where('acceptance', 1)->whereNotNull('campaign_id')->get();
+        $list = Campaign::has('donation.donor')->with('donation',
+        function($query){
+            $query->where('received', '=', 1)->with('donor');
+        
+        })
+        ->where('charity_id', $id)
+        ->get();
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
 
@@ -481,7 +502,7 @@ class CharityUserController extends Controller
         $id = auth()->guard('charity-api')->user()->id;
 
         $list = Donation::with('donor')->where('charity_id', $id)
-        ->where('acceptance', 1)->whereNull('campaign_id')->get();
+        ->where('received', 1)->whereNull('campaign_id')->get();
         
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
