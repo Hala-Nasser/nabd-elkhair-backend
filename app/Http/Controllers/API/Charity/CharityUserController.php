@@ -105,6 +105,12 @@ class CharityUserController extends Controller
             $charity->save();
         }
 
+        $donors = Donor::select('*')->where('fcm_token', $request['fcm'])->get();
+        foreach ($donors as $donor) {
+            $donor->fcm_token = null;
+            $donor->save();
+        }
+
         $charity = charity::find($request['user_id']);
         $charity->fcm_token = $request['fcm'];
         $success = $charity->save();

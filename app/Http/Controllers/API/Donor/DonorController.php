@@ -67,6 +67,12 @@ class DonorController extends Controller
             $donor->fcm_token = null;
             $donor->save();
         }
+
+        $charities = Charity::select('*')->where('fcm_token', $request['fcm'])->get();
+        foreach ($charities as $charity) {
+            $charity->fcm_token = null;
+            $charity->save();
+        }
         //المفترض افحص برضو بجدول الجمعيات لكن لسا ما تم اضافة التوكن على بيانات الجدول
 
         $donor = Donor::find($request['user_id']);
