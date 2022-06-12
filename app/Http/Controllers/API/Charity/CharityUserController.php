@@ -402,8 +402,7 @@ class CharityUserController extends Controller
         $item->milli = $numMilisecondsSinceEpoch;
         $item->date = date('Y-m-d H:i:s', strtotime($item->created_at));
 
-        }
-        
+        }        
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
 

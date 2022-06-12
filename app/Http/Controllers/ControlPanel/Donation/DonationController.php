@@ -52,6 +52,6 @@ class DonationController extends Controller
             $donation_type = DonationType::find($donation->donation_type_id);
             $donation->donation_type_image = $donation_type->image;
         }
-        return view('ControlPanel.donation.index')->with('donations', $donations)->with('donor_name', $donor_name);
+        return view('ControlPanel.donation.donor')->with('donations', $donations)->with('donor_name', $donor_name);
     }
 }
