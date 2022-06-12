@@ -31,7 +31,7 @@ class StaticPagesSeeder extends Seeder
         $new_about = new StaticPage();
         $new_about->id = 1;
         $new_about->content = "عن التطبيق";
-        $new_about->name = "عن التطبيق";
+        $new_about->name = "من نحن";
 
         $result = $new_about->save();
     }

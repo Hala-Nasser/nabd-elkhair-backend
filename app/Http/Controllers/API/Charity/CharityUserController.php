@@ -396,6 +396,7 @@ class CharityUserController extends Controller
         ->where('done', 0)
         ->where('charity_id',auth()->guard('charity-api')->user()->id)
         ->get(); 
+        
         return response()->json($this->sendResponse($status=true,$message="", $data=$list));
     }
 

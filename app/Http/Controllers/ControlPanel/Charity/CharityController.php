@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\ControlPanel\Charity;
 
 use App\Http\Controllers\Controller;
+use App\Mail\EnableCharity;
 use Illuminate\Http\Request;
 use App\Models\Charity;
 use App\Models\PaymentLink;
 use App\Models\Donor;
+use Illuminate\Support\Facades\Mail;
 
 class CharityController extends Controller
 {
@@ -46,6 +48,10 @@ class CharityController extends Controller
         }
 
         if ($result) {
+            $details = [
+                'title' => 'تفعيل حسابك',
+            ];
+           // Mail::to($charity->email)->send(new EnableCharity($details));
             return redirect('charity');
         } else {
             return redirect()->back();
