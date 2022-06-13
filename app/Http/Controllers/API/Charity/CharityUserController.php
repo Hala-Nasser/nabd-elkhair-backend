@@ -480,7 +480,7 @@ class CharityUserController extends Controller
 
         return response()->json($this->sendResponse($status=true,$message="", $data=$count));
     }
-
+    //
     public function getCampaignDonations(){
     
         $id = auth()->guard('charity-api')->user()->id;
