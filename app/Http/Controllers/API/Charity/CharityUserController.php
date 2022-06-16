@@ -332,9 +332,20 @@ class CharityUserController extends Controller
             return response()->json($this->sendResponse($status=false,$message=$validator->errors(), $data=""));            
         }
         $donation = Donation::find($request->donation_id);
+        $charity = Charity::find($donation->charity_id);
         $donation->acceptance = $request->acceptance;
         $donation->done = 1;
         $success = $donation->update();
+        if($success){
+            if($donation->acceptance){
+                $notification_content = ' تم قبول طلب تبرعك ';
+                $this->sendNotification('طلب التبرع', $notification_content, Donor::class, $charity->image, "donor");
+            }else{
+                $notification_content = ' تم رفض طلب تبرعك ';
+                $this->sendNotification('طلب التبرع', $notification_content, Donor::class, $charity->image, "donor");
+            }
+           
+        }
         return response()->json($this->sendResponse($status=$success,$message=(($success)? ($donation->acceptance)? "تم قبول التبرع بنجاح":"تم رفض طلب التبرع":"فشل قبول الطلب"), $data=""));
     }
 
