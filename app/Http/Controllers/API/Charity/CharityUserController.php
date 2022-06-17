@@ -111,7 +111,7 @@ class CharityUserController extends Controller
             $donor->fcm_token = null;
             $donor->save();
         }
-        //
+        //SOME TEST
         $charity = charity::find($request['user_id']);
         $charity->fcm_token = $request['fcm'];
         $charity->first_login = 1;
