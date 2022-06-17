@@ -114,6 +114,7 @@ class CharityUserController extends Controller
 
         $charity = charity::find($request['user_id']);
         $charity->fcm_token = $request['fcm'];
+        $charity->first_login = 1;
         $success = $charity->save();
         return response()->json($this->sendResponse($status = $success, $message = (($success) ? "تم اضافة التوكن بنجاح" : "فشل اضافة التوكن"), $data = (($success) ? $charity : null)));
     }
