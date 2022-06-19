@@ -50,7 +50,7 @@
               <th style="width: 1%; text-align:center">
                 #
               </th>
-              <th style="width: 15%; text-align:center">
+              <th style="width: 10%; text-align:center">
                 المتبرع
               </th>
               <th style="width: 15%; text-align:center">
@@ -59,10 +59,10 @@
               <th style="width: 10%; text-align:center">
                 نوع التبرع
               </th>
-              <th style="width: 15%; text-align:center">
+              {{-- <th style="width: 15%; text-align:center">
                 رابط التبرع
-              </th>
-              <th style="width: 10%; text-align:center">
+              </th> --}}
+              <th style="width: 15%; text-align:center">
                 وصف التبرع
               </th>
               <th style="width: 10%; text-align:center">
@@ -98,34 +98,22 @@
                 <img alt="Avatar" src="{{asset('storage/uploads/images/'.$donation->donation_type_image)}}"
                   style="width:50px; height:40px; border-radius: 8px; object-fit: contain;">
               </td>
-              <td style="vertical-align: middle; text-align:center">
+              {{-- <td style="vertical-align: middle; text-align:center">
                 @if ($donation->payment_link == null)
                 <h6 style="font-size:14px;">-</h6>
                 @else
                 <h6 style="font-size:14px;">{{ $donation->payment_link }}</h6>
                 @endif
+              </td> --}}
+              <td style="vertical-align: middle; text-align:center">
+                <h6 style="font-size:14px;">{{ $donation->description }}</h6>
               </td>
               <td style="vertical-align: middle; text-align:center">
-                @if ($donation->donation_amount == null)
-                <h6 style="font-size:14px;">-</h6>
-                @else
-                <h6 style="font-size:14px;">{{ $donation->donation_description }}</h6>
-                @endif
-              </td>
-              <td style="vertical-align: middle; text-align:center">
-                @if ($donation->donor_phone == null)
-                <h6 style="font-size:14px;">-</h6>
-                @else
                 <h6 style="font-size:14px;">{{ $donation->donor_phone }}</h6>
-                @endif
               </td>
               <td style="vertical-align: middle; text-align:center">
-                @if ($donation->donor_district == null)
-                <h6 style="font-size:14px;">-</h6>
-                @else
                 <h6 style="font-size:14px;">{{ $donation->donor_district }}-{{ $donation->donor_city }}-{{
                   $donation->donor_address }}</h6>
-                @endif
               </td>
             </tr>
             @endforeach
