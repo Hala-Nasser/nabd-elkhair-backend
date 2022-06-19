@@ -40,6 +40,7 @@ Route::post('donationtype/restore/{id}', [App\Http\Controllers\ControlPanel\Dona
 Route::get('/complaint', [App\Http\Controllers\ControlPanel\Complaint\ComplaintController::class, 'index'])->name('complaint');
 
 Route::get('charity/donation/{id}', [App\Http\Controllers\ControlPanel\Donation\DonationController::class, 'index']);
+Route::get('donor/donation/{id}', [App\Http\Controllers\ControlPanel\Donation\DonationController::class, 'donor']);
 
 Route::get('static/{id}', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'index']);
 Route::post('static/store/{id}', [App\Http\Controllers\ControlPanel\StaticPagesController::class, 'staticStore']);

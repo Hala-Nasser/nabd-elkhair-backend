@@ -58,6 +58,6 @@ class StaticPagesController extends Controller
             $static->content = $request['content'];
             $static->save();
         }
-        return redirect('home');
+        return redirect()->back();
     }
 }

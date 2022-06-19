@@ -191,12 +191,12 @@
                     <p style="color: #fff; margin-right:5px; font-size:14px;">عن التطبيق</p>
                   </a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                   <a href="{{ URL('static/2') }}" class="nav-link" id="privacypolicy">
                     <i class="far fa-circle nav-icon"></i>
                     <p style="color: #fff; margin-right:5px; font-size:14px;">سياسة الاستخدام</p>
                   </a>
-                </li>
+                </li> --}}
                 <li class="nav-item">
                   <a href="{{ URL('static/3') }}" class="nav-link" id="onboarding1">
                     <i class="far fa-circle nav-icon"></i>

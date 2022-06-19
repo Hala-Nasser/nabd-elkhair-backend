@@ -95,7 +95,7 @@
                 </a>
                 <form action="{{ URL('donor/delete/' . $donor->id) }}" method="POST" style="display: inline;">
                   @csrf
-                  <button type="submit" class="btn btn-danger btn-sm">
+                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('هل تريد حذف المتبرع؟')">
                     <i class="fas fa-trash">
                     </i>
                     حذف</button>
